@@ -77,7 +77,6 @@ export function SleepLogForm({
           id="bed_time"
           type="time"
           name="bed_time"
-          step="300"
           defaultValue={defaultBedTime}
           required
           className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
@@ -103,7 +102,6 @@ export function SleepLogForm({
           id="wake_time"
           type="time"
           name="wake_time"
-          step="300"
           defaultValue={defaultWakeTime}
           required
           className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"

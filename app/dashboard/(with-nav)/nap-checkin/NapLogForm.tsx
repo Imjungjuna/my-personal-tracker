@@ -51,7 +51,6 @@ export function NapLogForm() {
           id="start_time"
           type="time"
           name="start_time"
-          step="300"
           required
           className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
         />
@@ -76,7 +75,6 @@ export function NapLogForm() {
           id="end_time"
           type="time"
           name="end_time"
-          step="300"
           required
           className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
         />
