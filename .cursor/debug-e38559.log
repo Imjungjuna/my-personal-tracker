@@ -1,0 +1,15 @@
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:entry","message":"proxy request","data":{"pathname":"/","origin":"http://localhost:3000"},"timestamp":1773121264340,"hypothesisId":"H1,H3,H4"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:getClaims","message":"after getClaims","data":{"hasUser":false,"pathname":"/"},"timestamp":1773121264343,"hypothesisId":"H2"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:redirect","message":"redirect to login","data":{"redirectHref":"http://localhost:3000/login","pathname":"/"},"timestamp":1773121264343,"hypothesisId":"H1,H5"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:entry","message":"proxy request","data":{"pathname":"/login","origin":"http://localhost:3000"},"timestamp":1773121264346,"hypothesisId":"H1,H3,H4"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:getClaims","message":"after getClaims","data":{"hasUser":false,"pathname":"/login"},"timestamp":1773121264347,"hypothesisId":"H2"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:next","message":"pass through","data":{"pathname":"/login"},"timestamp":1773121264347,"hypothesisId":"H4"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:entry","message":"proxy request","data":{"pathname":"/login","origin":"http://localhost:3000"},"timestamp":1773121283871,"hypothesisId":"H1,H3,H4"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:getClaims","message":"after getClaims","data":{"hasUser":false,"pathname":"/login"},"timestamp":1773121283874,"hypothesisId":"H2"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:next","message":"pass through","data":{"pathname":"/login"},"timestamp":1773121283874,"hypothesisId":"H4"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:entry","message":"proxy request","data":{"pathname":"/","origin":"http://localhost:3000"},"timestamp":1773121285794,"hypothesisId":"H1,H3,H4"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:getClaims","message":"after getClaims","data":{"hasUser":false,"pathname":"/"},"timestamp":1773121285795,"hypothesisId":"H2"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:redirect","message":"redirect to login","data":{"redirectHref":"http://localhost:3000/login","pathname":"/"},"timestamp":1773121285796,"hypothesisId":"H1,H5"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:entry","message":"proxy request","data":{"pathname":"/login","origin":"http://localhost:3000"},"timestamp":1773121285822,"hypothesisId":"H1,H3,H4"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:getClaims","message":"after getClaims","data":{"hasUser":false,"pathname":"/login"},"timestamp":1773121285823,"hypothesisId":"H2"}
+{"sessionId":"e38559","location":"lib/supabase/proxy.ts:next","message":"pass through","data":{"pathname":"/login"},"timestamp":1773121285823,"hypothesisId":"H4"}

@@ -1,27 +1,29 @@
-'use client'
+"use client";
 
-import { createClient } from '@/lib/supabase/client'
-import { useState } from 'react'
+import { createClient } from "@/lib/supabase/client";
+import { useState } from "react";
 
 export function GoogleSignInButton() {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleGoogleSignIn() {
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
     try {
-      const supabase = createClient()
+      const supabase = createClient();
       await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: "google",
         options: {
-          redirectTo: `http://localhost:3000/auth/callback`,
+          redirectTo: `${typeof window !== "undefined" ? window.location.origin : ""}/auth/callback`,
         },
-      })
+      });
       // redirect는 OAuth 플로우에서 브라우저가 처리함
     } catch (e) {
-      setError(e instanceof Error ? e.message : '로그인 중 오류가 발생했습니다.')
-      setLoading(false)
+      setError(
+        e instanceof Error ? e.message : "로그인 중 오류가 발생했습니다.",
+      );
+      setLoading(false);
     }
   }
 
@@ -48,7 +50,7 @@ export function GoogleSignInButton() {
         </p>
       )}
     </div>
-  )
+  );
 }
 
 function GoogleIcon({ className }: { className?: string }) {
@@ -71,5 +73,5 @@ function GoogleIcon({ className }: { className?: string }) {
         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
       />
     </svg>
-  )
+  );
 }
