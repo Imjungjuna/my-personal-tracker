@@ -1,25 +1,28 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import { isOnboardingComplete } from '@/lib/types/supabase'
-import { MoodLogForm } from './MoodLogForm'
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import { isOnboardingComplete } from "@/lib/types/supabase";
+import { MoodLogForm } from "@/app/dashboard/(with-nav)/mood-checkin/MoodLogForm";
 
 export default async function MoodCheckinPage() {
-  const supabase = await createClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
 
   if (error || !user) {
-    redirect('/login')
+    redirect("/login");
   }
 
   const { data: profile } = await supabase
-    .from('profiles')
-    .select('id, age')
-    .eq('id', user.id)
-    .single()
+    .from("profiles")
+    .select("id, age")
+    .eq("id", user.id)
+    .single();
 
   if (!isOnboardingComplete(profile ?? null)) {
-    redirect('/onboarding?next=/dashboard/mood-checkin')
+    redirect("/onboarding?next=/dashboard/mood-checkin");
   }
 
   return (
@@ -45,5 +48,5 @@ export default async function MoodCheckinPage() {
         </section>
       </div>
     </div>
-  )
+  );
 }

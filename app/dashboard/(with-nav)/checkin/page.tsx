@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { SleepLogForm } from "./SleepLogForm";
+import { SleepLogForm } from "@/app/dashboard/(with-nav)/checkin/SleepLogForm";
 import type { SleepLogFormInitial } from "@/lib/types/supabase";
 import { isOnboardingComplete } from "@/lib/types/supabase";
 

@@ -6,7 +6,7 @@ export default function Home() {
     <div className="flex min-h-screen items-center gap-4 justify-center bg-zinc-50 font-sans dark:bg-black">
       <h1>Hello Sleepy Dog!</h1>
       <Button asChild>
-        <Link href="/dashboard">Go to Dashboard</Link>
+        <Link href="/login">Login</Link>
       </Button>
     </div>
   );
