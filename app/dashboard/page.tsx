@@ -165,14 +165,14 @@ export default async function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-100 px-4 py-8 dark:bg-zinc-900">
-      <div className="mx-auto max-w-7xl space-y-6">
-        <header className="flex items-center justify-between">
+    <div className="min-h-screen bg-zinc-100 px-4 py-6 sm:py-8 dark:bg-zinc-900">
+      <div className="mx-auto max-w-7xl space-y-0">
+        <header className="flex items-center justify-between pb-6 border-b border-zinc-200 dark:border-zinc-700">
           <div>
-            <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
+            <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
               대시보드
             </h1>
-            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+            <p className="mt-1.5 text-base text-zinc-600 dark:text-zinc-400">
               안녕하세요,{" "}
               <strong className="text-zinc-900 dark:text-zinc-100">
                 {displayName}
@@ -217,111 +217,110 @@ export default async function DashboardPage() {
           </div>
         </header>
 
-        <section className="grid gap-4 grid-cols-1 md:grid-cols-2">
-          <div className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-              오늘
-            </h2>
-            <ul className="mt-4 space-y-4">
-              <li className="flex items-center justify-between border-b border-zinc-100 pb-3 dark:border-zinc-600">
-                <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                  수면 기록
+        <section className="py-5 px-2 border-b border-zinc-200 dark:border-zinc-700">
+          <h2 className="text-base font-medium text-zinc-900 dark:text-zinc-50">
+            오늘
+          </h2>
+          <ul className="mt-4 space-y-0">
+            <li className="flex items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-700 first:pt-0">
+              <span className="text-base text-zinc-600 dark:text-zinc-400">
+                수면 기록
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="text-base font-medium text-zinc-900 dark:text-zinc-50">
+                  {hasTodayLog ? "기록됨" : "없음"}
                 </span>
-                <span className="flex items-center gap-2">
-                  <span className="font-medium text-zinc-900 dark:text-zinc-50">
-                    {hasTodayLog ? "기록됨" : "없음"}
-                  </span>
-                  <Link
-                    href="/dashboard/checkin"
-                    className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-                  >
-                    기록하기 →
-                  </Link>
+                <Link
+                  href="/dashboard/checkin"
+                  className="rounded-lg bg-zinc-800 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
+                >
+                  기록하기 →
+                </Link>
+              </span>
+            </li>
+            <li className="flex items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-700">
+              <span className="text-base text-zinc-600 dark:text-zinc-400">
+                기분 체크인
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="text-base font-medium text-zinc-900 dark:text-zinc-50">
+                  {todayMoodCount}회
                 </span>
-              </li>
-              <li className="flex items-center justify-between border-b border-zinc-100 pb-3 dark:border-zinc-600">
-                <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                  기분 체크인
+                <Link
+                  href="/dashboard/mood-checkin"
+                  className="rounded-lg bg-zinc-800 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
+                >
+                  기록하기 →
+                </Link>
+              </span>
+            </li>
+            <li className="flex items-center justify-between py-4">
+              <span className="text-base text-zinc-600 dark:text-zinc-400">
+                낮잠
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="text-base font-medium text-zinc-900 dark:text-zinc-50">
+                  {todayNapCount}회
                 </span>
-                <span className="flex items-center gap-2">
-                  <span className="font-medium text-zinc-900 dark:text-zinc-50">
-                    {todayMoodCount}회
-                  </span>
-                  <Link
-                    href="/dashboard/mood-checkin"
-                    className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-                  >
-                    기록하기 →
-                  </Link>
-                </span>
-              </li>
-              <li className="flex items-center justify-between pb-0">
-                <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                  낮잠
-                </span>
-                <span className="flex items-center gap-2">
-                  <span className="font-medium text-zinc-900 dark:text-zinc-50">
-                    {todayNapCount}회
-                  </span>
-                  <Link
-                    href="/dashboard/nap-checkin"
-                    className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-                  >
-                    기록하기 →
-                  </Link>
-                </span>
-              </li>
-            </ul>
-          </div>
-          <div className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
-            <h2 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-              최근 7일
-            </h2>
-            <ul className="mt-4 space-y-4">
-              <li className="flex items-center justify-between border-b border-zinc-100 pb-3 dark:border-zinc-600">
-                <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                  평균 수면
-                </span>
-                <span className="font-medium text-zinc-900 dark:text-zinc-50">
-                  {avgMinutesLast7 != null
-                    ? formatDuration(avgMinutesLast7)
-                    : "—"}
-                </span>
-              </li>
-              <li className="flex items-center justify-between border-b border-zinc-100 pb-3 dark:border-zinc-600">
-                <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                  평균 기분
-                </span>
-                <span className="font-medium text-zinc-900 dark:text-zinc-50">
-                  {avgMoodLast7 != null ? `${avgMoodLast7}` : "—"}
-                </span>
-              </li>
-              <li className="flex items-center justify-between pb-0">
-                <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                  낮잠
-                </span>
-                <span className="font-medium text-zinc-900 dark:text-zinc-50">
-                  {last7Nap.length > 0
-                    ? `${last7Nap.length}회 · ${formatDuration(totalNapMinLast7)}`
-                    : "—"}
-                </span>
-              </li>
-            </ul>
-          </div>
+                <Link
+                  href="/dashboard/nap-checkin"
+                  className="rounded-lg bg-zinc-800 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
+                >
+                  기록하기 →
+                </Link>
+              </span>
+            </li>
+          </ul>
+        </section>
+
+        <section className="py-5 border-b border-zinc-200 dark:border-zinc-700">
+          <h2 className="text-base font-medium text-zinc-900 dark:text-zinc-50">
+            최근 7일
+          </h2>
+          <ul className="mt-4 space-y-0">
+            <li className="flex items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-700 first:pt-0">
+              <span className="text-base text-zinc-600 dark:text-zinc-400">
+                평균 수면
+              </span>
+              <span className="text-base font-medium text-zinc-900 dark:text-zinc-50">
+                {avgMinutesLast7 != null
+                  ? formatDuration(avgMinutesLast7)
+                  : "—"}
+              </span>
+            </li>
+            <li className="flex items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-700">
+              <span className="text-base text-zinc-600 dark:text-zinc-400">
+                평균 기분
+              </span>
+              <span className="text-base font-medium text-zinc-900 dark:text-zinc-50">
+                {avgMoodLast7 != null ? `${avgMoodLast7}` : "—"}
+              </span>
+            </li>
+            <li className="flex items-center justify-between py-4">
+              <span className="text-base text-zinc-600 dark:text-zinc-400">
+                낮잠
+              </span>
+              <span className="text-base font-medium text-zinc-900 dark:text-zinc-50">
+                {last7Nap.length > 0
+                  ? `${last7Nap.length}회 · ${formatDuration(totalNapMinLast7)}`
+                  : "—"}
+              </span>
+            </li>
+          </ul>
         </section>
 
         {lastLog && (
-          <div className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-700 dark:bg-zinc-800">
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          <div className="py-5 border-b border-zinc-200 dark:border-zinc-700">
+            <p className="text-base text-zinc-500 dark:text-zinc-400">
               최근 기록
             </p>
-            <p className="mt-1 font-medium text-zinc-900 dark:text-zinc-50">
+            <p className="mt-1 text-base font-medium text-zinc-900 dark:text-zinc-50">
               {lastLog.sleep_date} · {formatDuration(lastLog.durationMinutes)}
             </p>
           </div>
         )}
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-0 lg:grid-cols-3">
           <SleepCharts logs={logsWithDuration} />
           <MoodChart logs={moodLogs} />
           <NapChart logs={napLogsWithDuration} />
