@@ -38,8 +38,8 @@ export function SleepCharts({ logs }: { logs: SleepLogForChart[] }) {
 
   if (chartData.length === 0) {
     return (
-      <div className="py-5 pb-6 border-b border-zinc-200 dark:border-zinc-700 last:border-b-0">
-        <h3 className="text-base font-medium text-zinc-900 dark:text-zinc-50">
+      <div className="py-5 border-b border-zinc-200 dark:border-zinc-700 last:border-b-0">
+        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
           최근 수면 시간
         </h3>
         <p className="mt-4 text-base text-zinc-500 dark:text-zinc-400">
@@ -50,8 +50,8 @@ export function SleepCharts({ logs }: { logs: SleepLogForChart[] }) {
   }
 
   return (
-    <div className="py-5 pb-6 border-b border-zinc-200 dark:border-zinc-700 last:border-b-0">
-      <h3 className="text-base font-medium text-zinc-900 dark:text-zinc-50">
+    <div className="pt-5 pb-4 border-b border-zinc-200 dark:border-zinc-700 last:border-b-0">
+      <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
         최근 수면 시간
       </h3>
       <div className="mt-4 h-64">
