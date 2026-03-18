@@ -1,29 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { isOnboardingComplete } from "@/lib/types/supabase";
+import { verifySession } from "@/lib/dal";
 import { MoodLogForm } from "@/app/dashboard/(with-nav)/mood-checkin/MoodLogForm";
 
 export default async function MoodCheckinPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    redirect("/login");
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id, age")
-    .eq("id", user.id)
-    .single();
-
-  if (!isOnboardingComplete(profile ?? null)) {
-    redirect("/onboarding?next=/dashboard/mood-checkin");
-  }
+  await verifySession();
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-100 px-4 py-8 dark:bg-zinc-900">

@@ -217,11 +217,11 @@ export default async function DashboardPage() {
           </div>
         </header>
         <div className="flex flex-col md:flex-row gap-6">
-          <section className="flex flex-1 flex-col pt-5 md:px-2 border-b border-zinc-200 dark:border-zinc-700">
+          <section className="flex flex-1 flex-col pt-5 md:px-2">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
               오늘
             </h2>
-            <ul className="mt-4 flex flex-1 flex-col min-h-0 space-y-0">
+            <ul className="mt-4 flex flex-1 flex-col space-y-0">
               <li className="flex flex-1 items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-700 first:pt-0">
                 <span className="text-base text-zinc-600 dark:text-zinc-400">
                   수면 기록
@@ -254,7 +254,7 @@ export default async function DashboardPage() {
                   </Link>
                 </span>
               </li>
-              <li className="flex flex-1 items-center justify-between py-4">
+              <li className="flex flex-1 items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-700">
                 <span className="text-base text-zinc-600 dark:text-zinc-400">
                   낮잠
                 </span>
@@ -273,11 +273,11 @@ export default async function DashboardPage() {
             </ul>
           </section>
 
-          <section className="flex flex-1 flex-col pt-5 mb-5 md:mb-0 md:px-2 border-b border-zinc-200 dark:border-zinc-700">
+          <section className="flex flex-1 flex-col pt-5 mb-5 md:mb-0 md:px-2">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
               최근 7일
             </h2>
-            <ul className="mt-4 flex flex-1 flex-col min-h-0 space-y-0">
+            <ul className="mt-4 flex flex-1 flex-col space-y-0 h-20">
               <li className="flex flex-1 items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-700 first:pt-0">
                 <span className="text-base text-zinc-600 dark:text-zinc-400">
                   평균 수면
@@ -296,7 +296,7 @@ export default async function DashboardPage() {
                   {avgMoodLast7 != null ? `${avgMoodLast7}` : "—"}
                 </span>
               </li>
-              <li className="flex flex-1 items-center justify-between py-4">
+              <li className="flex flex-1 items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-700">
                 <span className="text-base text-zinc-600 dark:text-zinc-400">
                   낮잠
                 </span>

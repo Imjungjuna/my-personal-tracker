@@ -10,26 +10,6 @@ function isProtectedRoute(pathname: string) {
 }
 
 export async function updateSession(request: NextRequest) {
-  // #region agent log
-  fetch("http://127.0.0.1:7563/ingest/a3863a5f-be11-4ccd-889b-f3f9eea40172", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "e38559",
-    },
-    body: JSON.stringify({
-      sessionId: "e38559",
-      location: "lib/supabase/proxy.ts:entry",
-      message: "proxy request",
-      data: {
-        pathname: request.nextUrl.pathname,
-        origin: request.nextUrl.origin,
-      },
-      timestamp: Date.now(),
-      hypothesisId: "H1,H3,H4",
-    }),
-  }).catch(() => {});
-  // #endregion
   let supabaseResponse = NextResponse.next({
     request,
   });
