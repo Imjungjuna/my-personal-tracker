@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isOnboardingComplete } from "@/lib/types/supabase";
 
-export const verifySession = cache(async () => {
+export const verifySessionUsingGetUser = cache(async () => {
   const supabase = await createClient();
   const {
     data: { user },
@@ -18,8 +18,18 @@ export const verifySession = cache(async () => {
   return { isAuth: true, user };
 });
 
+export const verifySessionUsingGetClaims = cache(async () => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getClaims();
+  if (error || !data) {
+    redirect("/login");
+  }
+
+  return { isAuth: true, data };
+});
+
 export const getUserProfile = cache(async () => {
-  const { user } = await verifySession();
+  const { user } = await verifySessionUsingGetUser();
   const supabase = await createClient();
 
   const { data: profile } = await supabase
