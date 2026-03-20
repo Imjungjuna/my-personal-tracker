@@ -1,29 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { isOnboardingComplete } from "@/lib/types/supabase";
 import { NapLogForm } from "@/app/dashboard/(with-nav)/nap-checkin/NapLogForm";
+import { verifySessionUsingGetClaims } from "@/lib/dal";
 
 export default async function NapCheckinPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    redirect("/login");
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id, age")
-    .eq("id", user.id)
-    .single();
-
-  if (!isOnboardingComplete(profile ?? null)) {
-    redirect("/onboarding?next=/dashboard/nap-checkin");
-  }
+  await verifySessionUsingGetClaims();
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-100 px-4 py-8 dark:bg-zinc-900">

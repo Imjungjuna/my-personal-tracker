@@ -1,9 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+// import { createClient } from "@/lib/supabase/server";
+// import { redirect } from "next/navigation";
 import Link from "next/link";
 import { SleepLogForm } from "@/app/dashboard/(with-nav)/checkin/SleepLogForm";
 import type { SleepLogFormInitial } from "@/lib/types/supabase";
-import { isOnboardingComplete } from "@/lib/types/supabase";
+import { verifySessionUsingGetClaims } from "@/lib/dal";
 
 function getTodayISO() {
   const d = new Date();
@@ -11,42 +11,15 @@ function getTodayISO() {
 }
 
 export default async function CheckinPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    redirect("/login");
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id, age")
-    .eq("id", user.id)
-    .single();
-
-  if (!isOnboardingComplete(profile ?? null)) {
-    redirect("/onboarding?next=/dashboard/checkin");
-  }
+  await verifySessionUsingGetClaims();
 
   const today = getTodayISO();
-  const { data: todayLog } = await supabase
-    .from("sleep_logs")
-    .select("sleep_date, bed_time, wake_time")
-    .eq("user_id", user.id)
-    .eq("sleep_date", today)
-    .maybeSingle();
 
-  const initialLog: SleepLogFormInitial | null =
-    todayLog == null
-      ? null
-      : {
-          sleep_date: todayLog.sleep_date,
-          bed_time: todayLog.bed_time,
-          wake_time: todayLog.wake_time,
-        };
+  const initialLog: SleepLogFormInitial | null = {
+    sleep_date: today,
+    bed_time: "",
+    wake_time: "", //현재 시간 반환하면 좋을 듯
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-100 px-4 py-8 dark:bg-zinc-900">
