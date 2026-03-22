@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { SleepCharts } from "@/app/dashboard/(with-nav)/checkin/SleepCharts";
 
-const RECENT_DAYS = 14;
+const RECENT_DAYS = 6;
 
 function getTodayISO() {
   const d = new Date();

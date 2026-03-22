@@ -30,31 +30,23 @@ export function NapChart({ logs }: { logs: NapLogForChart[] }) {
     return acc;
   }, {});
 
-  const chartData = Object.entries(byDate)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, totalMin]) => ({
-      date: date.slice(5).replace("-", "/"),
-      minutes: totalMin,
-      label: formatDuration(totalMin),
-    }));
+  const chartData = Array.from({ length: 7 }).map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    const dateStr = d.toISOString().slice(0, 10);
+    const totalMin = byDate[dateStr];
 
-  if (chartData.length === 0) {
-    return (
-      <div className="pt-5 pb-4 border-b border-zinc-200 dark:border-zinc-700 last:border-b-0">
-        <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-          최근 낮잠
-        </h3>
-        <p className="mt-4 text-base text-zinc-500 dark:text-zinc-400">
-          기록된 낮잠 데이터가 없습니다. 낮잠 기록에서 입력해 보세요.
-        </p>
-      </div>
-    );
-  }
+    return {
+      date: dateStr.slice(5).replace("-", "/"),
+      minutes: totalMin ? totalMin : null,
+      label: totalMin ? formatDuration(totalMin) : "기록 없음",
+    };
+  });
 
   return (
     <div className="pt-5 pb-4 border-b border-zinc-200 dark:border-zinc-700 last:border-b-0">
       <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-        최근 낮잠 (날짜별 합계)
+        최근 낮잠
       </h3>
       <div className="mt-4 h-64">
         <ResponsiveContainer width="100%" height="100%">
@@ -69,6 +61,7 @@ export function NapChart({ logs }: { logs: NapLogForChart[] }) {
               tickLine={false}
             />
             <YAxis
+              width={45}
               tick={{ fontSize: 14 }}
               stroke="#71717a"
               tickLine={false}

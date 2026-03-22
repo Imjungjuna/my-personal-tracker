@@ -1,19 +1,3 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import { isOnboardingComplete } from "@/lib/types/supabase";
-import {
-  SleepCharts,
-  type SleepLogForChart,
-} from "./(with-nav)/checkin/SleepCharts";
-import {
-  MoodChart,
-  type MoodLogForChart,
-} from "./(with-nav)/mood-checkin/MoodChart";
-import {
-  NapChart,
-  type NapLogForChart,
-} from "./(with-nav)/nap-checkin/NapChart";
 import { Suspense } from "react";
 import HeaderSkeleton from "@/components/Skeleton/HeaderSkeleton";
 import Header from "@/components/Header";
@@ -25,6 +9,10 @@ import NapChartWrapper from "@/components/NapChartWrapper";
 import MoodChartWrapper from "@/components/MoodChartWrapper";
 import TodayCardSkeleton from "@/components/Skeleton/TodayCardSkeleton";
 import RecentSleepLogSkeleton from "@/components/Skeleton/RecentSleepLogSkeleton";
+import Last7DaysCardSkeleton from "@/components/Skeleton/Last7DaysCardSkeleton";
+import SleepChartWrapperSkeleton from "@/components/Skeleton/SleepChartWrapperSkeleton";
+import MoodChartWrapperSkeleton from "@/components/Skeleton/MoodChartWrapperSkeleton";
+import NapChartWrapperSkeleton from "@/components/NapChartWrapper";
 
 export default async function DashboardPage() {
   return (
@@ -34,11 +22,11 @@ export default async function DashboardPage() {
           <Header />
         </Suspense>
 
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col md:flex-row lg:gap-12 gap-6">
           <Suspense fallback={<TodayCardSkeleton />}>
             <TodayCard />
           </Suspense>
-          <Suspense fallback={<TodayCardSkeleton />}>
+          <Suspense fallback={<Last7DaysCardSkeleton />}>
             <Last7DaysCard />
           </Suspense>
         </div>
@@ -46,26 +34,14 @@ export default async function DashboardPage() {
           <RecentSleepLog />
         </Suspense>
 
-        <div className="grid gap-0 lg:grid-cols-3 py-6">
-          <Suspense
-            fallback={
-              <div className="h-64 animate-pulse bg-zinc-200 dark:bg-zinc-800 rounded-lg mx-2" />
-            }
-          >
+        <div className="grid gap-0 lg:grid-cols-3 lg:gap-6 py-6">
+          <Suspense fallback={<SleepChartWrapperSkeleton />}>
             <SleepChartWrapper />
           </Suspense>
-          <Suspense
-            fallback={
-              <div className="h-64 animate-pulse bg-zinc-200 dark:bg-zinc-800 rounded-lg mx-2" />
-            }
-          >
+          <Suspense fallback={<MoodChartWrapperSkeleton />}>
             <MoodChartWrapper />
           </Suspense>
-          <Suspense
-            fallback={
-              <div className="h-64 animate-pulse bg-zinc-200 dark:bg-zinc-800 rounded-lg mx-2" />
-            }
-          >
+          <Suspense fallback={<NapChartWrapperSkeleton />}>
             <NapChartWrapper />
           </Suspense>
         </div>

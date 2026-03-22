@@ -4,7 +4,7 @@ import {
   type MoodLogForChart,
 } from "@/app/dashboard/(with-nav)/mood-checkin/MoodChart";
 
-const RECENT_DAYS = 14;
+const RECENT_DAYS = 6;
 
 function getLogTimeFromDaysAgo(days: number): string {
   const d = new Date();
