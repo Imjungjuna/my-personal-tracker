@@ -1,17 +1,10 @@
+import { getCachedUser } from "@/lib/dal";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export default async function UserHeader() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    redirect("/login");
-  }
+  const user = await getCachedUser();
 
   const displayName =
     user.user_metadata?.full_name ??

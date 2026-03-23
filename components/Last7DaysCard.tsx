@@ -1,5 +1,9 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import {
+  getCachedUser,
+  getCachedSleepLogs7Days,
+  getCachedMoodLogs7Days,
+  getCachedNapLogs7Days,
+} from "@/lib/dal";
 
 function getDateDaysAgo(days: number): string {
   const d = new Date();
@@ -29,38 +33,17 @@ function napDurationMinutes(startTime: string, endTime: string): number {
 }
 
 export default async function Last7DaysCard() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
 
-  if (error || !user) {
-    redirect("/login");
-  }
-
-  const sevenDaysAgoDate = getDateDaysAgo(7);
+  const sevenDaysAgoDate = getDateDaysAgo(6); //test caching
   const sevenDaysAgoTs = getLogTimeFromDaysAgo(7);
 
-  const [sleepResult, moodResult, napResult] = await Promise.all([
-    supabase
-      .from("sleep_logs")
-      .select("bed_time, wake_time")
-      .eq("user_id", user.id)
-      .gte("sleep_date", sevenDaysAgoDate),
-    supabase
-      .from("mood_logs")
-      .select("score")
-      .eq("user_id", user.id)
-      .gte("log_time", sevenDaysAgoTs),
-    supabase
-      .from("nap_logs")
-      .select("start_time, end_time")
-      .eq("user_id", user.id)
-      .gte("start_time", sevenDaysAgoTs),
+  const [sleepLogs, moodLogs, napLogs] = await Promise.all([
+    getCachedSleepLogs7Days(user.id, sevenDaysAgoDate),
+    getCachedMoodLogs7Days(user.id, sevenDaysAgoTs),
+    getCachedNapLogs7Days(user.id, sevenDaysAgoTs),
   ]);
 
-  const sleepLogs = sleepResult.data ?? [];
   const avgMinutesLast7 =
     sleepLogs.length > 0
       ? Math.round(
@@ -71,7 +54,6 @@ export default async function Last7DaysCard() {
         )
       : null;
 
-  const moodLogs = moodResult.data ?? [];
   const avgMoodLast7 =
     moodLogs.length > 0
       ? Math.round(
@@ -79,7 +61,6 @@ export default async function Last7DaysCard() {
         ) / 10
       : null;
 
-  const napLogs = napResult.data ?? [];
   const totalNapMinLast7 = napLogs.reduce(
     (s, n) => s + napDurationMinutes(n.start_time, n.end_time),
     0,

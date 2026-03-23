@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { getCachedUser, getCachedMoodLogs7Days } from "@/lib/dal";
 import {
   MoodChart,
   type MoodLogForChart,
@@ -14,23 +14,12 @@ function getLogTimeFromDaysAgo(days: number): string {
 }
 
 export default async function MoodChartWrapper() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return null;
-
+  const user = await getCachedUser();
   const fromTs = getLogTimeFromDaysAgo(RECENT_DAYS);
 
-  const { data: moodResult } = await supabase
-    .from("mood_logs")
-    .select("log_time, score")
-    .eq("user_id", user.id)
-    .gte("log_time", fromTs)
-    .order("log_time", { ascending: false });
+  const moodResult = await getCachedMoodLogs7Days(user.id, fromTs);
 
-  const moodLogs: MoodLogForChart[] = (moodResult ?? []).map((row) => ({
+  const moodLogs: MoodLogForChart[] = moodResult.map((row) => ({
     log_time: row.log_time,
     score: row.score,
   }));

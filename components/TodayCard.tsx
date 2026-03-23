@@ -1,7 +1,11 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-import { isOnboardingComplete } from "@/lib/types/supabase";
+import {
+  getCachedUser,
+  getUserProfile,
+  getCachedSleepLogs7Days,
+  getCachedMoodLogs7Days,
+  getCachedNapLogs7Days,
+} from "@/lib/dal";
 
 function getTodayISO() {
   const d = new Date();
@@ -14,52 +18,41 @@ function getTodayStartTs() {
   return d.toISOString();
 }
 
+function getDateDaysAgo(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return d.toISOString().slice(0, 10);
+}
+
+function getLogTimeFromDaysAgo(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  d.setHours(0, 0, 0, 0);
+  return d.toISOString();
+}
+
 export default async function TodayCard() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
+  await getUserProfile();
 
-  if (error || !user) {
-    redirect("/login");
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id, age")
-    .eq("id", user.id)
-    .single();
-
-  if (!isOnboardingComplete(profile ?? null)) {
-    redirect("/onboarding?next=/dashboard");
-  }
-
-  const today = getTodayISO();
+  const todayISO = getTodayISO();
   const todayStartTs = getTodayStartTs();
+  const sevenDaysAgoDate = getDateDaysAgo(6); //test caching
+  const sevenDaysAgoTs = getLogTimeFromDaysAgo(7);
 
-  const [{ count: sleepCount }, { count: moodCount }, { count: napCount }] =
-    await Promise.all([
-      supabase
-        .from("sleep_logs")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .eq("sleep_date", today),
-      supabase
-        .from("mood_logs")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .gte("log_time", todayStartTs),
-      supabase
-        .from("nap_logs")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .gte("start_time", todayStartTs),
-    ]);
+  const [sleepLogs, moodLogs, napLogs] = await Promise.all([
+    getCachedSleepLogs7Days(user.id, sevenDaysAgoDate),
+    getCachedMoodLogs7Days(user.id, sevenDaysAgoTs),
+    getCachedNapLogs7Days(user.id, sevenDaysAgoTs),
+  ]);
 
-  const hasTodayLog = (sleepCount ?? 0) > 0;
-  const todayMoodCount = moodCount ?? 0;
-  const todayNapCount = napCount ?? 0;
+  const hasTodayLog = sleepLogs.some((log) => log.sleep_date === todayISO);
+  const todayMoodCount = moodLogs.filter(
+    (log) => log.log_time >= todayStartTs,
+  ).length;
+  const todayNapCount = napLogs.filter(
+    (log) => log.start_time >= todayStartTs,
+  ).length;
 
   return (
     <section className="flex flex-1 flex-col pt-5 md:px-2">

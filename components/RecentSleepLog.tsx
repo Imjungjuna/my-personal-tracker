@@ -1,4 +1,10 @@
-import { createClient } from "@/lib/supabase/server";
+import { getCachedUser, getCachedSleepLogs7Days } from "@/lib/dal";
+
+function getDateDaysAgo(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return d.toISOString().slice(0, 10);
+}
 
 function durationMinutes(bedTime: string, wakeTime: string): number {
   const bed = new Date(bedTime).getTime();
@@ -15,21 +21,11 @@ const formatDuration = (min: number) => {
 };
 
 export default async function RecentSleepLog() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCachedUser();
+  const sevenDaysAgoDate = getDateDaysAgo(6); //test caching
+  const sleepLogs = await getCachedSleepLogs7Days(user.id, sevenDaysAgoDate);
 
-  if (!user) return null;
-
-  const { data: logs } = await supabase
-    .from("sleep_logs")
-    .select("sleep_date, bed_time, wake_time")
-    .eq("user_id", user.id)
-    .order("sleep_date", { ascending: false })
-    .limit(1);
-
-  const lastLog = logs?.[0];
+  const lastLog = sleepLogs[0];
 
   if (!lastLog) return null;
 

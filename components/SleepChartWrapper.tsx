@@ -1,7 +1,7 @@
-import { createClient } from "@/lib/supabase/server";
+import { getCachedUser, getCachedSleepLogs7Days } from "@/lib/dal";
 import { SleepCharts } from "@/app/dashboard/(with-nav)/checkin/SleepCharts";
 
-const RECENT_DAYS = 6;
+const RECENT_DAYS = 6; //test caching
 
 function getTodayISO() {
   const d = new Date();
@@ -23,30 +23,23 @@ function durationMinutes(bedTime: string, wakeTime: string): number {
 }
 
 export default async function SleepChartWrapper() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return null;
+  const user = await getCachedUser();
 
   const today = getTodayISO();
-  const fromDate = getDateDaysAgo(RECENT_DAYS);
+  const fromDate = getDateDaysAgo(RECENT_DAYS); //test caching
 
-  const { data: recentLogs } = await supabase
-    .from("sleep_logs")
-    .select("sleep_date, bed_time, wake_time")
-    .eq("user_id", user.id)
-    .gte("sleep_date", fromDate)
-    .lte("sleep_date", today)
-    .order("sleep_date", { ascending: false });
+  const recentLogs = await getCachedSleepLogs7Days(user.id, fromDate);
 
-  const logsWithDuration = (recentLogs ?? []).map((row) => ({
-    sleep_date: row.sleep_date,
-    bed_time: row.bed_time,
-    wake_time: row.wake_time,
-    durationMinutes: durationMinutes(row.bed_time, row.wake_time),
-  }));
+  const logsWithDuration = recentLogs
+    .filter((row) => row.sleep_date <= today)
+    .map((row) => ({
+      sleep_date: row.sleep_date,
+      bed_time: row.bed_time,
+      wake_time: row.wake_time,
+      durationMinutes: durationMinutes(row.bed_time, row.wake_time),
+    }));
 
   return <SleepCharts logs={logsWithDuration} />;
 }
+
+//수면 기록은 원래 쿼리에 lte로 오늘 날짜까지 제한하는 조건이 있었어. DAL 함수는 gte 조건만 가지고 있으니, 자바스크립트의 filter 메서드를 사용해서 오늘 날짜 이후의 미래 데이터가 있다면 걸러내도록 처리했어.

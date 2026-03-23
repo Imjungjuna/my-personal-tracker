@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { getCachedUser, getCachedNapLogs7Days } from "@/lib/dal";
 import {
   NapChart,
   type NapLogForChart,
@@ -20,29 +20,16 @@ function napDurationMinutes(startTime: string, endTime: string): number {
 }
 
 export default async function NapChartWrapper() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) return null;
-
+  const user = await getCachedUser();
   const fromTs = getLogTimeFromDaysAgo(RECENT_DAYS);
 
-  const { data: napResult } = await supabase
-    .from("nap_logs")
-    .select("start_time, end_time")
-    .eq("user_id", user.id)
-    .gte("start_time", fromTs)
-    .order("start_time", { ascending: false });
+  const napResult = await getCachedNapLogs7Days(user.id, fromTs);
 
-  const napLogsWithDuration: NapLogForChart[] = (napResult ?? []).map(
-    (row) => ({
-      start_time: row.start_time,
-      end_time: row.end_time,
-      durationMinutes: napDurationMinutes(row.start_time, row.end_time),
-    }),
-  );
+  const napLogsWithDuration: NapLogForChart[] = napResult.map((row) => ({
+    start_time: row.start_time,
+    end_time: row.end_time,
+    durationMinutes: napDurationMinutes(row.start_time, row.end_time),
+  }));
 
   return <NapChart logs={napLogsWithDuration} />;
 }
