@@ -5,43 +5,15 @@ import {
   getCachedNapLogs7Days,
 } from "@/lib/dal";
 
-function getDateDaysAgo(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() - days);
-  return d.toISOString().slice(0, 10);
-}
-
-function getLogTimeFromDaysAgo(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() - days);
-  d.setHours(0, 0, 0, 0);
-  return d.toISOString();
-}
-
-function durationMinutes(bedTime: string, wakeTime: string): number {
-  const bed = new Date(bedTime).getTime();
-  const wake = new Date(wakeTime).getTime();
-  let diff = (wake - bed) / 60_000;
-  if (diff < 0) diff += 24 * 60;
-  return Math.round(diff);
-}
-
-function napDurationMinutes(startTime: string, endTime: string): number {
-  const start = new Date(startTime).getTime();
-  const end = new Date(endTime).getTime();
-  return Math.round((end - start) / 60_000);
-}
+import { durationMinutes, formatDuration } from "@/utils/date";
 
 export default async function Last7DaysCard() {
   const user = await getCachedUser();
 
-  const sevenDaysAgoDate = getDateDaysAgo(6); //test caching
-  const sevenDaysAgoTs = getLogTimeFromDaysAgo(7);
-
   const [sleepLogs, moodLogs, napLogs] = await Promise.all([
-    getCachedSleepLogs7Days(user.id, sevenDaysAgoDate),
-    getCachedMoodLogs7Days(user.id, sevenDaysAgoTs),
-    getCachedNapLogs7Days(user.id, sevenDaysAgoTs),
+    getCachedSleepLogs7Days(user.id),
+    getCachedMoodLogs7Days(user.id),
+    getCachedNapLogs7Days(user.id),
   ]);
 
   const avgMinutesLast7 =
@@ -62,15 +34,9 @@ export default async function Last7DaysCard() {
       : null;
 
   const totalNapMinLast7 = napLogs.reduce(
-    (s, n) => s + napDurationMinutes(n.start_time, n.end_time),
+    (s, n) => s + durationMinutes(n.start_time, n.end_time),
     0,
   );
-
-  const formatDuration = (min: number) => {
-    const h = Math.floor(min / 60);
-    const m = min % 60;
-    return m === 0 ? `${h}시간` : `${h}시간 ${m}분`;
-  };
 
   return (
     <section className="flex flex-1 flex-col pt-5 mb-5 md:mb-0 md:px-2">

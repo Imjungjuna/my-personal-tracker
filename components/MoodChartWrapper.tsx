@@ -3,21 +3,12 @@ import {
   MoodChart,
   type MoodLogForChart,
 } from "@/app/dashboard/(with-nav)/mood-checkin/MoodChart";
-
-const RECENT_DAYS = 6;
-
-function getLogTimeFromDaysAgo(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() - days);
-  d.setHours(0, 0, 0, 0);
-  return d.toISOString();
-}
+import { getLogTimeFromDaysAgo } from "@/utils/date";
 
 export default async function MoodChartWrapper() {
   const user = await getCachedUser();
-  const fromTs = getLogTimeFromDaysAgo(RECENT_DAYS);
 
-  const moodResult = await getCachedMoodLogs7Days(user.id, fromTs);
+  const moodResult = await getCachedMoodLogs7Days(user.id);
 
   const moodLogs: MoodLogForChart[] = moodResult.map((row) => ({
     log_time: row.log_time,

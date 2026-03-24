@@ -4,9 +4,7 @@ import { verifySessionUsingGetClaims } from "@/lib/dal";
 import { MoodLogForm } from "@/app/dashboard/(with-nav)/mood-checkin/MoodLogForm";
 
 export default async function MoodCheckinPage() {
-  // console.time("UsingGetUser");
   await verifySessionUsingGetClaims();
-  // console.timeEnd("UsingGetUser");
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-100 px-4 py-8 dark:bg-zinc-900">

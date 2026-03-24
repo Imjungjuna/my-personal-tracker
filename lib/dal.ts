@@ -3,6 +3,7 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isOnboardingComplete } from "@/lib/types/supabase";
+import { getDateDaysAgo } from "@/utils/date";
 
 export const verifySessionUsingGetUser = cache(async () => {
   const supabase = await createClient();
@@ -61,9 +62,10 @@ export const getCachedUser = cache(async () => {
   return user;
 });
 
+//test caching
+
 export const getCachedSleepLogs7Days = cache(
-  async (userId: string, fromDate: string) => {
-    console.log("DB 통신 발생: getCachedSleepLogs7Days 호출됨"); // 여기에 추가
+  async (userId: string, fromDate: string = getDateDaysAgo(6)) => {
     const supabase = await createClient();
 
     const { data } = await supabase
@@ -78,7 +80,7 @@ export const getCachedSleepLogs7Days = cache(
 );
 
 export const getCachedMoodLogs7Days = cache(
-  async (userId: string, fromTs: string) => {
+  async (userId: string, fromTs: string = getDateDaysAgo(6)) => {
     const supabase = await createClient();
     const { data } = await supabase
       .from("mood_logs")
@@ -92,7 +94,7 @@ export const getCachedMoodLogs7Days = cache(
 );
 
 export const getCachedNapLogs7Days = cache(
-  async (userId: string, fromTs: string) => {
+  async (userId: string, fromTs: string = getDateDaysAgo(6)) => {
     const supabase = await createClient();
     const { data } = await supabase
       .from("nap_logs")

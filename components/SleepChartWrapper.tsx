@@ -1,34 +1,12 @@
 import { getCachedUser, getCachedSleepLogs7Days } from "@/lib/dal";
 import { SleepCharts } from "@/app/dashboard/(with-nav)/checkin/SleepCharts";
-
-const RECENT_DAYS = 6; //test caching
-
-function getTodayISO() {
-  const d = new Date();
-  return d.toISOString().slice(0, 10);
-}
-
-function getDateDaysAgo(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() - days);
-  return d.toISOString().slice(0, 10);
-}
-
-function durationMinutes(bedTime: string, wakeTime: string): number {
-  const bed = new Date(bedTime).getTime();
-  const wake = new Date(wakeTime).getTime();
-  let diff = (wake - bed) / 60_000;
-  if (diff < 0) diff += 24 * 60;
-  return Math.round(diff);
-}
+import { getTodayISO, durationMinutes } from "@/utils/date";
 
 export default async function SleepChartWrapper() {
   const user = await getCachedUser();
 
   const today = getTodayISO();
-  const fromDate = getDateDaysAgo(RECENT_DAYS); //test caching
-
-  const recentLogs = await getCachedSleepLogs7Days(user.id, fromDate);
+  const recentLogs = await getCachedSleepLogs7Days(user.id);
 
   const logsWithDuration = recentLogs
     .filter((row) => row.sleep_date <= today)

@@ -1,24 +1,5 @@
 import { getCachedUser, getCachedSleepLogs7Days } from "@/lib/dal";
-
-function getDateDaysAgo(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() - days);
-  return d.toISOString().slice(0, 10);
-}
-
-function durationMinutes(bedTime: string, wakeTime: string): number {
-  const bed = new Date(bedTime).getTime();
-  const wake = new Date(wakeTime).getTime();
-  let diff = (wake - bed) / 60_000;
-  if (diff < 0) diff += 24 * 60;
-  return Math.round(diff);
-}
-
-const formatDuration = (min: number) => {
-  const h = Math.floor(min / 60);
-  const m = min % 60;
-  return m === 0 ? `${h}시간` : `${h}시간 ${m}분`;
-};
+import { getDateDaysAgo, durationMinutes, formatDuration } from "@/utils/date";
 
 export default async function RecentSleepLog() {
   const user = await getCachedUser();

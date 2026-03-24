@@ -7,29 +7,12 @@ import {
   getCachedNapLogs7Days,
 } from "@/lib/dal";
 
-function getTodayISO() {
-  const d = new Date();
-  return d.toISOString().slice(0, 10);
-}
-
-function getTodayStartTs() {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d.toISOString();
-}
-
-function getDateDaysAgo(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() - days);
-  return d.toISOString().slice(0, 10);
-}
-
-function getLogTimeFromDaysAgo(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() - days);
-  d.setHours(0, 0, 0, 0);
-  return d.toISOString();
-}
+import {
+  getTodayStartTs,
+  getTodayISO,
+  getDateDaysAgo,
+  getLogTimeFromDaysAgo,
+} from "@/utils/date";
 
 export default async function TodayCard() {
   const user = await getCachedUser();
@@ -37,13 +20,11 @@ export default async function TodayCard() {
 
   const todayISO = getTodayISO();
   const todayStartTs = getTodayStartTs();
-  const sevenDaysAgoDate = getDateDaysAgo(6); //test caching
-  const sevenDaysAgoTs = getLogTimeFromDaysAgo(7);
 
   const [sleepLogs, moodLogs, napLogs] = await Promise.all([
-    getCachedSleepLogs7Days(user.id, sevenDaysAgoDate),
-    getCachedMoodLogs7Days(user.id, sevenDaysAgoTs),
-    getCachedNapLogs7Days(user.id, sevenDaysAgoTs),
+    getCachedSleepLogs7Days(user.id),
+    getCachedMoodLogs7Days(user.id),
+    getCachedNapLogs7Days(user.id),
   ]);
 
   const hasTodayLog = sleepLogs.some((log) => log.sleep_date === todayISO);
