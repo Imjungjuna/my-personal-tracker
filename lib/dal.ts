@@ -3,21 +3,7 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isOnboardingComplete } from "@/lib/types/supabase";
-import { getDateDaysAgo } from "@/utils/date";
-
-export const verifySessionUsingGetUser = cache(async () => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-
-  if (error || !user) {
-    redirect("/login");
-  }
-
-  return { isAuth: true, user };
-});
+import { getDateDaysAgo, getLogTimeFromDaysAgo } from "@/utils/date";
 
 export const verifySessionUsingGetClaims = cache(async () => {
   const supabase = await createClient();
@@ -30,7 +16,7 @@ export const verifySessionUsingGetClaims = cache(async () => {
 });
 
 export const getUserProfile = cache(async () => {
-  const { user } = await verifySessionUsingGetUser();
+  const user = await getCachedUser();
   const supabase = await createClient();
 
   const { data: profile } = await supabase
@@ -80,7 +66,7 @@ export const getCachedSleepLogs7Days = cache(
 );
 
 export const getCachedMoodLogs7Days = cache(
-  async (userId: string, fromTs: string = getDateDaysAgo(6)) => {
+  async (userId: string, fromTs: string = getLogTimeFromDaysAgo(6)) => {
     const supabase = await createClient();
     const { data } = await supabase
       .from("mood_logs")
@@ -94,7 +80,7 @@ export const getCachedMoodLogs7Days = cache(
 );
 
 export const getCachedNapLogs7Days = cache(
-  async (userId: string, fromTs: string = getDateDaysAgo(6)) => {
+  async (userId: string, fromTs: string = getLogTimeFromDaysAgo(6)) => {
     const supabase = await createClient();
     const { data } = await supabase
       .from("nap_logs")
