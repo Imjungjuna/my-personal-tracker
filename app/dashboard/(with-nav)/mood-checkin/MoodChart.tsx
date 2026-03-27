@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { use } from "react";
 
 export type MoodLogForChart = {
   log_time: string;
@@ -23,17 +24,22 @@ const MOOD_LABELS: Record<number, string> = {
   5: "매우 좋음",
 };
 
-export function MoodChart({ logs }: { logs: MoodLogForChart[] }) {
-  const byDate = logs.reduce<Record<string, { sum: number; count: number }>>(
-    (acc, log) => {
-      const date = log.log_time.slice(0, 10);
-      if (!acc[date]) acc[date] = { sum: 0, count: 0 };
-      acc[date].sum += log.score;
-      acc[date].count += 1;
-      return acc;
-    },
-    {},
-  );
+export function MoodChart({
+  moodPromise,
+}: {
+  moodPromise: Promise<MoodLogForChart[]>;
+}) {
+  const moodLogs: MoodLogForChart[] = use(moodPromise);
+
+  const byDate = moodLogs.reduce<
+    Record<string, { sum: number; count: number }>
+  >((acc, log) => {
+    const date = log.log_time.slice(0, 10);
+    if (!acc[date]) acc[date] = { sum: 0, count: 0 };
+    acc[date].sum += log.score;
+    acc[date].count += 1;
+    return acc;
+  }, {});
 
   const chartData = Array.from({ length: 7 }).map((_, i) => {
     const d = new Date();

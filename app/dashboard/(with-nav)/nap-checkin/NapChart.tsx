@@ -10,6 +10,14 @@ import {
   Cell,
 } from "recharts";
 
+import { use } from "react";
+import { durationMinutes } from "@/utils/date";
+
+export type NapLogBeforeProcess = {
+  start_time: string;
+  end_time: string;
+};
+
 export type NapLogForChart = {
   start_time: string;
   end_time: string;
@@ -23,12 +31,29 @@ function formatDuration(minutes: number): string {
   return m === 0 ? `${h}시간` : `${h}시간 ${m}분`;
 }
 
-export function NapChart({ logs }: { logs: NapLogForChart[] }) {
-  const byDate = logs.reduce<Record<string, number>>((acc, log) => {
-    const date = log.start_time.slice(0, 10);
-    acc[date] = (acc[date] ?? 0) + log.durationMinutes;
-    return acc;
-  }, {});
+export function NapChart({
+  napPromise,
+}: {
+  napPromise: Promise<NapLogBeforeProcess[]>;
+}) {
+  const napLogsBeforeProcess: NapLogBeforeProcess[] = use(napPromise);
+
+  const napLogsWithDuration: NapLogForChart[] = napLogsBeforeProcess.map(
+    (row) => ({
+      start_time: row.start_time,
+      end_time: row.end_time,
+      durationMinutes: durationMinutes(row.start_time, row.end_time),
+    }),
+  );
+
+  const byDate = napLogsWithDuration.reduce<Record<string, number>>(
+    (acc, log) => {
+      const date = log.start_time.slice(0, 10);
+      acc[date] = (acc[date] ?? 0) + log.durationMinutes;
+      return acc;
+    },
+    {},
+  );
 
   const chartData = Array.from({ length: 7 }).map((_, i) => {
     const d = new Date();

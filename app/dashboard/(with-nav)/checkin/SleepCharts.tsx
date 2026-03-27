@@ -1,5 +1,6 @@
 "use client";
 
+import { use } from "react";
 import {
   BarChart,
   Bar,
@@ -9,12 +10,12 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import { getTodayISO, durationMinutes } from "@/utils/date";
 
-export type SleepLogForChart = {
+export type SleepLogRaw = {
   sleep_date: string;
   bed_time: string;
   wake_time: string;
-  durationMinutes: number;
 };
 
 function formatDuration(minutes: number): string {
@@ -24,12 +25,20 @@ function formatDuration(minutes: number): string {
   return `${h}시간 ${m}분`;
 }
 
-export function SleepCharts({ logs }: { logs: SleepLogForChart[] }) {
-  const byDate = logs.reduce<Record<string, number>>((acc, log) => {
-    const date = log.sleep_date.slice(0, 10);
-    acc[date] = log.durationMinutes;
-    return acc;
-  }, {});
+export function SleepCharts({
+  sleepPromise,
+}: {
+  sleepPromise: Promise<SleepLogRaw[]>;
+}) {
+  const logs = use(sleepPromise);
+
+  const today = getTodayISO();
+  const byDate: Record<string, number> = {};
+  for (const row of logs) {
+    if (row.sleep_date <= today) {
+      byDate[row.sleep_date] = durationMinutes(row.bed_time, row.wake_time);
+    }
+  }
 
   const chartData = Array.from({ length: 7 }).map((_, i) => {
     const d = new Date();

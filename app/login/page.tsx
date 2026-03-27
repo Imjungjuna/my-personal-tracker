@@ -1,4 +1,4 @@
-import { GoogleSignInButton } from './GoogleSignInButton'
+import { GoogleSignInButton } from "./GoogleSignInButton";
 
 export default function LoginPage() {
   return (
@@ -15,5 +15,5 @@ export default function LoginPage() {
         <GoogleSignInButton />
       </div>
     </div>
-  )
+  );
 }
