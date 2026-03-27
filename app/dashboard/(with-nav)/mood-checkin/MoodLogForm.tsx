@@ -2,14 +2,7 @@
 
 import { useActionState } from 'react'
 import { saveMoodLog, type SaveMoodLogState } from './actions'
-
-const MOOD_LABELS: Record<number, string> = {
-  1: '매우 나쁨',
-  2: '나쁨',
-  3: '보통',
-  4: '좋음',
-  5: '매우 좋음',
-}
+import { MOOD_LABELS } from '@/utils/date'
 
 export function MoodLogForm() {
   const [state, formAction, pending] = useActionState(saveMoodLog, {} as SaveMoodLogState)

@@ -1,5 +1,4 @@
 import Link from "next/link";
-// import { verifySessionUsingGetUser } from "@/lib/dal";
 import { verifySessionUsingGetClaims } from "@/lib/dal";
 import { MoodLogForm } from "@/app/dashboard/(with-nav)/mood-checkin/MoodLogForm";
 

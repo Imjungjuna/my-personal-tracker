@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
 export type SaveNapLogState = {
+  success?: boolean
   errors?: {
     nap_date?: string
     start_time?: string

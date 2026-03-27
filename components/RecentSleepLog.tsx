@@ -3,7 +3,7 @@ import { getDateDaysAgo, durationMinutes, formatDuration } from "@/utils/date";
 
 export default async function RecentSleepLog() {
   const user = await getCachedUser();
-  const sevenDaysAgoDate = getDateDaysAgo(6); //test caching
+  const sevenDaysAgoDate = getDateDaysAgo(6);
   const sleepLogs = await getCachedSleepLogs7Days(user.id, sevenDaysAgoDate);
 
   const lastLog = sleepLogs[0];

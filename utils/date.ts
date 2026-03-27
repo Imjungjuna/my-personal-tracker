@@ -32,8 +32,17 @@ export function getLogTimeFromDaysAgo(days: number): string {
   return new Date(`${targetDate}T00:00:00+09:00`).toISOString();
 }
 
+export const MOOD_LABELS: Record<number, string> = {
+  1: "매우 나쁨",
+  2: "나쁨",
+  3: "보통",
+  4: "좋음",
+  5: "매우 좋음",
+};
+
 export const formatDuration = (min: number) => {
   const h = Math.floor(min / 60);
   const m = min % 60;
+  if (h === 0) return `${m}분`;
   return m === 0 ? `${h}시간` : `${h}시간 ${m}분`;
 };

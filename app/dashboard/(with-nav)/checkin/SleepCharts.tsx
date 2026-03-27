@@ -8,9 +8,8 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Cell,
 } from "recharts";
-import { getTodayISO, durationMinutes } from "@/utils/date";
+import { getTodayISO, durationMinutes, formatDuration } from "@/utils/date";
 
 export type SleepLogRaw = {
   sleep_date: string;
@@ -23,13 +22,6 @@ function formatTime(iso: string): string {
   const h = d.getUTCHours().toString().padStart(2, "0");
   const m = d.getUTCMinutes().toString().padStart(2, "0");
   return `${h}:${m}`;
-}
-
-function formatDuration(minutes: number): string {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  if (m === 0) return `${h}시간`;
-  return `${h}시간 ${m}분`;
 }
 
 export function SleepCharts({
@@ -100,7 +92,6 @@ export function SleepCharts({
               content={({ active, payload }) => {
                 if (!active || !payload?.length) return null;
                 const p = payload[0].payload;
-                console.log(p.bedTime);
                 return (
                   <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-sm dark:border-zinc-600 dark:bg-zinc-800">
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -123,11 +114,7 @@ export function SleepCharts({
               radius={[4, 4, 0, 0]}
               maxBarSize={48}
               fill="#71717a"
-            >
-              {chartData.map((_, i) => (
-                <Cell key={i} fill="#71717a" />
-              ))}
-            </Bar>
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

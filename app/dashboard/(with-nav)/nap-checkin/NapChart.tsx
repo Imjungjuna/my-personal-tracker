@@ -7,29 +7,15 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Cell,
 } from "recharts";
 
 import { use, useMemo } from "react";
-import { durationMinutes } from "@/utils/date";
+import { durationMinutes, formatDuration } from "@/utils/date";
 
 export type NapLogBeforeProcess = {
   start_time: string;
   end_time: string;
 };
-
-export type NapLogForChart = {
-  start_time: string;
-  end_time: string;
-  durationMinutes: number;
-};
-
-function formatDuration(minutes: number): string {
-  if (minutes < 60) return `${minutes}분`;
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return m === 0 ? `${h}시간` : `${h}시간 ${m}분`;
-}
 
 export function NapChart({
   napPromise,
@@ -108,11 +94,7 @@ export function NapChart({
               radius={[4, 4, 0, 0]}
               maxBarSize={48}
               fill="#71717a"
-            >
-              {chartData.map((_, i) => (
-                <Cell key={i} fill="#71717a" />
-              ))}
-            </Bar>
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

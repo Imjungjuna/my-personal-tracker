@@ -2,10 +2,7 @@
 
 import { useActionState } from "react";
 import { saveNapLog, type SaveNapLogState } from "./actions";
-
-function getTodayISO() {
-  return new Date().toISOString().slice(0, 10);
-}
+import { getTodayISO } from "@/utils/date";
 
 export function NapLogForm() {
   const [state, formAction, pending] = useActionState(
@@ -91,6 +88,12 @@ export function NapLogForm() {
       {state?.errors?._form && (
         <p className="text-sm text-red-600 dark:text-red-400" role="alert">
           {state.errors._form}
+        </p>
+      )}
+
+      {state?.success && (
+        <p className="text-sm text-green-600 dark:text-green-400" role="status">
+          저장되었습니다.
         </p>
       )}
 

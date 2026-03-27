@@ -7,21 +7,13 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Cell,
 } from "recharts";
 import { use, useMemo } from "react";
+import { MOOD_LABELS } from "@/utils/date";
 
 export type MoodLogForChart = {
   log_time: string;
   score: number;
-};
-
-const MOOD_LABELS: Record<number, string> = {
-  1: "매우 나쁨",
-  2: "나쁨",
-  3: "보통",
-  4: "좋음",
-  5: "매우 좋음",
 };
 
 export function MoodChart({
@@ -80,9 +72,8 @@ export function MoodChart({
               tick={{ fontSize: 14 }}
               stroke="#71717a"
               tickLine={false}
-              domain={[1, 5]}
-              ticks={[1, 2, 3, 4, 5]}
-              tickFormatter={(v) => `${v}`}
+              domain={[0, 5]}
+              ticks={[0, 1, 2, 3, 4, 5]}
             />
             <Tooltip
               content={({ active, payload }) => {
@@ -120,11 +111,7 @@ export function MoodChart({
               radius={[4, 4, 0, 0]}
               maxBarSize={48}
               fill="#71717a"
-            >
-              {chartData.map((_, i) => (
-                <Cell key={i} fill="#71717a" />
-              ))}
-            </Bar>
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>

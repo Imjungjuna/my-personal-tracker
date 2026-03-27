@@ -32,8 +32,6 @@ export const getUserProfile = cache(async () => {
   return profile;
 });
 
-//below code is new dal
-
 export const getCachedUser = cache(async () => {
   const supabase = await createClient();
   const {
@@ -47,8 +45,6 @@ export const getCachedUser = cache(async () => {
 
   return user;
 });
-
-//test caching
 
 export const getCachedSleepLogs7Days = cache(
   async (userId: string, fromDate: string = getDateDaysAgo(6)) => {

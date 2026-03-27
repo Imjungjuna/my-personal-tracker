@@ -4,7 +4,6 @@ import { useActionState } from "react";
 import { saveSleepLog, type SaveSleepLogState } from "./actions";
 import type { SleepLogFormInitial } from "@/lib/types/supabase";
 
-/** timestamptz ISO 문자열에서 "HH:mm" 추출 (input type="time"용) */
 function timestamptzToTimeValue(iso: string | null): string {
   if (!iso) return "";
   try {

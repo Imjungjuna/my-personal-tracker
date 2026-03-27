@@ -21,7 +21,6 @@ const sleepLogSchema = z.object({
   wake_time: z.string().min(1, '기상 시간을 입력해 주세요.'),
 })
 
-/** time input "HH:mm" + date "YYYY-MM-DD" → timestamptz용 ISO 문자열 */
 function toTimestamptzISO(date: string, time: string): string {
   const normalized = time.length === 5 ? `${time}:00` : time
   return `${date}T${normalized}`

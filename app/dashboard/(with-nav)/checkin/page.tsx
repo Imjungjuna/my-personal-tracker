@@ -1,14 +1,8 @@
-// import { createClient } from "@/lib/supabase/server";
-// import { redirect } from "next/navigation";
 import Link from "next/link";
 import { SleepLogForm } from "@/app/dashboard/(with-nav)/checkin/SleepLogForm";
 import type { SleepLogFormInitial } from "@/lib/types/supabase";
 import { verifySessionUsingGetClaims } from "@/lib/dal";
-
-function getTodayISO() {
-  const d = new Date();
-  return d.toISOString().slice(0, 10);
-}
+import { getTodayISO } from "@/utils/date";
 
 export default async function CheckinPage() {
   await verifySessionUsingGetClaims();
@@ -18,7 +12,7 @@ export default async function CheckinPage() {
   const initialLog: SleepLogFormInitial | null = {
     sleep_date: today,
     bed_time: "",
-    wake_time: "", //현재 시간 반환하면 좋을 듯
+    wake_time: "",
   };
 
   return (

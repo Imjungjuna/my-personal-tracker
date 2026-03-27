@@ -1,7 +1,4 @@
 import { getCachedUser } from "@/lib/dal";
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-import Link from "next/link";
 
 export default async function UserHeader() {
   const user = await getCachedUser();
@@ -25,41 +22,6 @@ export default async function UserHeader() {
           </strong>
           님.
         </p>
-      </div>
-      <div className="items-center gap-3 hidden">
-        <Link
-          href="/dashboard/checkin"
-          className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-        >
-          수면 기록하기
-        </Link>
-        <Link
-          href="/dashboard/mood-checkin"
-          className="rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-        >
-          기분 기록하기
-        </Link>
-        <Link
-          href="/dashboard/nap-checkin"
-          className="rounded-lg border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
-        >
-          낮잠 기록하기
-        </Link>
-        <form
-          action={async () => {
-            "use server";
-            const supabase = await createClient();
-            await supabase.auth.signOut();
-            redirect("/login");
-          }}
-        >
-          <button
-            type="submit"
-            className="rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-600"
-          >
-            로그아웃
-          </button>
-        </form>
       </div>
     </header>
   );

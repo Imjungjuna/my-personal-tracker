@@ -7,12 +7,7 @@ import {
   getCachedNapLogs7Days,
 } from "@/lib/dal";
 
-import {
-  getTodayStartTs,
-  getTodayISO,
-  getDateDaysAgo,
-  getLogTimeFromDaysAgo,
-} from "@/utils/date";
+import { getTodayStartTs, getTodayISO } from "@/utils/date";
 
 export default async function TodayCard() {
   const user = await getCachedUser();
