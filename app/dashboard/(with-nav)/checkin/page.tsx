@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SleepLogForm } from "@/app/dashboard/(with-nav)/checkin/SleepLogForm";
 import type { SleepLogFormInitial } from "@/lib/types/supabase";
 import { verifySessionUsingGetClaims } from "@/lib/dal";
@@ -16,30 +15,23 @@ export default async function CheckinPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-100 px-4 py-8 dark:bg-zinc-900">
-      <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
-        <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
+    <div className="min-h-screen bg-zinc-100 px-6 pb-8 pt-14 dark:bg-zinc-900">
+      <div className="mx-auto w-full max-w-sm">
+        <div className="mb-6">
+          <h1 className="text-xl font-semibold text-zinc-900 [text-wrap:balance] dark:text-zinc-50">
             수면 기록
           </h1>
-          <Link
-            href="/dashboard"
-            className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-          >
-            대시보드로
-          </Link>
         </div>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
           취침·기상 시간을 입력해 주세요.
         </p>
 
-        <section className="mt-6 border-t border-zinc-200 pt-6 dark:border-zinc-600">
+        <div className="mt-8">
           <SleepLogForm
             today={today}
             initialLog={initialLog}
-            className="mt-4"
           />
-        </section>
+        </div>
       </div>
     </div>
   );
