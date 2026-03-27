@@ -18,6 +18,13 @@ export type SleepLogRaw = {
   wake_time: string;
 };
 
+function formatTime(iso: string): string {
+  const d = new Date(new Date(iso).getTime());
+  const h = d.getUTCHours().toString().padStart(2, "0");
+  const m = d.getUTCMinutes().toString().padStart(2, "0");
+  return `${h}:${m}`;
+}
+
 function formatDuration(minutes: number): string {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
@@ -31,12 +38,19 @@ export function SleepCharts({
   sleepPromise: Promise<SleepLogRaw[]>;
 }) {
   const logs = use(sleepPromise);
-
+  console.log(logs);
   const today = getTodayISO();
-  const byDate: Record<string, number> = {};
+  const byDate: Record<
+    string,
+    { minutes: number; bedTime: string; wakeTime: string }
+  > = {};
   for (const row of logs) {
     if (row.sleep_date <= today) {
-      byDate[row.sleep_date] = durationMinutes(row.bed_time, row.wake_time);
+      byDate[row.sleep_date] = {
+        minutes: durationMinutes(row.bed_time, row.wake_time),
+        bedTime: formatTime(row.bed_time),
+        wakeTime: formatTime(row.wake_time),
+      };
     }
   }
 
@@ -44,12 +58,14 @@ export function SleepCharts({
     const d = new Date();
     d.setDate(d.getDate() - (6 - i));
     const dateStr = d.toISOString().slice(0, 10);
-    const totalMin = byDate[dateStr];
+    const entry = byDate[dateStr];
 
     return {
       date: dateStr.slice(5).replace("-", "/"),
-      duration: totalMin ? totalMin / 60 : null,
-      durationLabel: totalMin ? formatDuration(totalMin) : "기록 없음",
+      duration: entry ? entry.minutes / 60 : null,
+      durationLabel: entry ? formatDuration(entry.minutes) : "기록 없음",
+      bedTime: entry?.bedTime ?? null,
+      wakeTime: entry?.wakeTime ?? null,
     };
   });
 
@@ -82,6 +98,7 @@ export function SleepCharts({
               content={({ active, payload }) => {
                 if (!active || !payload?.length) return null;
                 const p = payload[0].payload;
+                console.log(p.bedTime);
                 return (
                   <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-sm dark:border-zinc-600 dark:bg-zinc-800">
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -90,6 +107,11 @@ export function SleepCharts({
                     <p className="font-medium text-zinc-900 dark:text-zinc-100">
                       {p.durationLabel}
                     </p>
+                    {p.bedTime && p.wakeTime && (
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                        {p.bedTime} → {p.wakeTime}
+                      </p>
+                    )}
                   </div>
                 );
               }}
