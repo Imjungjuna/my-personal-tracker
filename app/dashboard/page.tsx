@@ -1,5 +1,10 @@
 import { Suspense } from "react";
-import { getCachedUser, getCachedSleepLogs7Days, getCachedMoodLogs7Days, getCachedNapLogs7Days } from "@/lib/dal";
+import {
+  getCachedUser,
+  getCachedSleepLogs7Days,
+  getCachedMoodLogs7Days,
+  getCachedNapLogs7Days,
+} from "@/lib/dal";
 import HeaderSkeleton from "@/components/Skeleton/HeaderSkeleton";
 import Header from "@/components/Header";
 import TodayCard from "@/components/TodayCard";

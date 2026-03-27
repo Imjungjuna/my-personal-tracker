@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, useMemo } from "react";
 import {
   BarChart,
   Bar,
@@ -38,36 +38,38 @@ export function SleepCharts({
   sleepPromise: Promise<SleepLogRaw[]>;
 }) {
   const logs = use(sleepPromise);
-  console.log(logs);
-  const today = getTodayISO();
-  const byDate: Record<
-    string,
-    { minutes: number; bedTime: string; wakeTime: string }
-  > = {};
-  for (const row of logs) {
-    if (row.sleep_date <= today) {
-      byDate[row.sleep_date] = {
-        minutes: durationMinutes(row.bed_time, row.wake_time),
-        bedTime: formatTime(row.bed_time),
-        wakeTime: formatTime(row.wake_time),
-      };
+
+  const chartData = useMemo(() => {
+    const today = getTodayISO();
+    const byDate: Record<
+      string,
+      { minutes: number; bedTime: string; wakeTime: string }
+    > = {};
+    for (const row of logs) {
+      if (row.sleep_date <= today) {
+        byDate[row.sleep_date] = {
+          minutes: durationMinutes(row.bed_time, row.wake_time),
+          bedTime: formatTime(row.bed_time),
+          wakeTime: formatTime(row.wake_time),
+        };
+      }
     }
-  }
 
-  const chartData = Array.from({ length: 7 }).map((_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
-    const dateStr = d.toISOString().slice(0, 10);
-    const entry = byDate[dateStr];
+    return Array.from({ length: 7 }).map((_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (6 - i));
+      const dateStr = d.toISOString().slice(0, 10);
+      const entry = byDate[dateStr];
 
-    return {
-      date: dateStr.slice(5).replace("-", "/"),
-      duration: entry ? entry.minutes / 60 : null,
-      durationLabel: entry ? formatDuration(entry.minutes) : "기록 없음",
-      bedTime: entry?.bedTime ?? null,
-      wakeTime: entry?.wakeTime ?? null,
-    };
-  });
+      return {
+        date: dateStr.slice(5).replace("-", "/"),
+        duration: entry ? entry.minutes / 60 : null,
+        durationLabel: entry ? formatDuration(entry.minutes) : "기록 없음",
+        bedTime: entry?.bedTime ?? null,
+        wakeTime: entry?.wakeTime ?? null,
+      };
+    });
+  }, [logs]);
 
   return (
     <div className="pt-5 pb-4 border-b border-zinc-200 dark:border-zinc-700 last:border-b-0">

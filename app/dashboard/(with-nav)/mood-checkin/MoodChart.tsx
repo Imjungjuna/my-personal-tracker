@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import { use } from "react";
+import { use, useMemo } from "react";
 
 export type MoodLogForChart = {
   log_time: string;
@@ -31,30 +31,32 @@ export function MoodChart({
 }) {
   const moodLogs: MoodLogForChart[] = use(moodPromise);
 
-  const byDate = moodLogs.reduce<
-    Record<string, { sum: number; count: number }>
-  >((acc, log) => {
-    const date = log.log_time.slice(0, 10);
-    if (!acc[date]) acc[date] = { sum: 0, count: 0 };
-    acc[date].sum += log.score;
-    acc[date].count += 1;
-    return acc;
-  }, {});
+  const chartData = useMemo(() => {
+    const byDate = moodLogs.reduce<
+      Record<string, { sum: number; count: number }>
+    >((acc, log) => {
+      const date = log.log_time.slice(0, 10);
+      if (!acc[date]) acc[date] = { sum: 0, count: 0 };
+      acc[date].sum += log.score;
+      acc[date].count += 1;
+      return acc;
+    }, {});
 
-  const chartData = Array.from({ length: 7 }).map((_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
-    const dateStr = d.toISOString().slice(0, 10);
-    const dayData = byDate[dateStr];
+    return Array.from({ length: 7 }).map((_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (6 - i));
+      const dateStr = d.toISOString().slice(0, 10);
+      const dayData = byDate[dateStr];
 
-    return {
-      date: dateStr.slice(5).replace("-", "/"),
-      avg: dayData ? Math.round((dayData.sum / dayData.count) * 10) / 10 : null,
-      label: dayData
-        ? `${(dayData.sum / dayData.count).toFixed(1)}`
-        : "기록 없음",
-    };
-  });
+      return {
+        date: dateStr.slice(5).replace("-", "/"),
+        avg: dayData ? Math.round((dayData.sum / dayData.count) * 10) / 10 : null,
+        label: dayData
+          ? `${(dayData.sum / dayData.count).toFixed(1)}`
+          : "기록 없음",
+      };
+    });
+  }, [moodLogs]);
 
   return (
     <div className="py-5 border-b border-zinc-200 dark:border-zinc-700 last:border-b-0">

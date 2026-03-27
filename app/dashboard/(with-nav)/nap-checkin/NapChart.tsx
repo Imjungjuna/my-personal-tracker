@@ -10,7 +10,7 @@ import {
   Cell,
 } from "recharts";
 
-import { use } from "react";
+import { use, useMemo } from "react";
 import { durationMinutes } from "@/utils/date";
 
 export type NapLogBeforeProcess = {
@@ -38,35 +38,26 @@ export function NapChart({
 }) {
   const napLogsBeforeProcess: NapLogBeforeProcess[] = use(napPromise);
 
-  const napLogsWithDuration: NapLogForChart[] = napLogsBeforeProcess.map(
-    (row) => ({
-      start_time: row.start_time,
-      end_time: row.end_time,
-      durationMinutes: durationMinutes(row.start_time, row.end_time),
-    }),
-  );
+  const chartData = useMemo(() => {
+    const byDate: Record<string, number> = {};
+    for (const row of napLogsBeforeProcess) {
+      const date = row.start_time.slice(0, 10);
+      byDate[date] = (byDate[date] ?? 0) + durationMinutes(row.start_time, row.end_time);
+    }
 
-  const byDate = napLogsWithDuration.reduce<Record<string, number>>(
-    (acc, log) => {
-      const date = log.start_time.slice(0, 10);
-      acc[date] = (acc[date] ?? 0) + log.durationMinutes;
-      return acc;
-    },
-    {},
-  );
+    return Array.from({ length: 7 }).map((_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - (6 - i));
+      const dateStr = d.toISOString().slice(0, 10);
+      const totalMin = byDate[dateStr];
 
-  const chartData = Array.from({ length: 7 }).map((_, i) => {
-    const d = new Date();
-    d.setDate(d.getDate() - (6 - i));
-    const dateStr = d.toISOString().slice(0, 10);
-    const totalMin = byDate[dateStr];
-
-    return {
-      date: dateStr.slice(5).replace("-", "/"),
-      minutes: totalMin ? totalMin : null,
-      label: totalMin ? formatDuration(totalMin) : "기록 없음",
-    };
-  });
+      return {
+        date: dateStr.slice(5).replace("-", "/"),
+        minutes: totalMin ?? null,
+        label: totalMin ? formatDuration(totalMin) : "기록 없음",
+      };
+    });
+  }, [napLogsBeforeProcess]);
 
   return (
     <div className="pt-5 pb-4 border-b border-zinc-200 dark:border-zinc-700 last:border-b-0">
