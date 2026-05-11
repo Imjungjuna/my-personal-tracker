@@ -1,41 +1,48 @@
-import Link from 'next/link'
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const NAV_ITEMS = [
+  { href: "/dashboard", label: "🏠 홈" },
+  { href: "/dashboard/checkin", label: "🌙 수면" },
+  { href: "/dashboard/mood-checkin", label: "🐾 기분" },
+  { href: "/dashboard/nap-checkin", label: "💤 낮잠" },
+];
 
 export default function WithNavLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
   return (
     <>
-      <nav className="border-b border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
-        <div className="mx-auto flex max-w-7xl gap-6 px-4 py-3">
-          <Link
-            href="/dashboard"
-            className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-          >
-            대시보드
-          </Link>
-          <Link
-            href="/dashboard/checkin"
-            className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-          >
-            수면 기록
-          </Link>
-          <Link
-            href="/dashboard/mood-checkin"
-            className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-          >
-            기분 기록
-          </Link>
-          <Link
-            href="/dashboard/nap-checkin"
-            className="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-          >
-            낮잠 기록
-          </Link>
+      <nav className="sticky top-0 z-10 border-b border-paw-brown-light bg-warm-white/80 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-3xl gap-1 px-4 py-2">
+          {NAV_ITEMS.map((item) => {
+            const isActive =
+              item.href === "/dashboard"
+                ? pathname === "/dashboard"
+                : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                  isActive
+                    ? "bg-sleepy-yellow text-bark-dark"
+                    : "text-bark-mid hover:bg-sleepy-yellow-light hover:text-bark-dark"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
       </nav>
       {children}
     </>
-  )
+  );
 }
