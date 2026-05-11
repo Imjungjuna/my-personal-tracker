@@ -6,8 +6,28 @@ import {
   getCachedMoodLogs7Days,
   getCachedNapLogs7Days,
 } from "@/lib/dal";
-
 import { getTodayStartTs, getTodayISO } from "@/utils/date";
+
+const LOG_ITEMS = [
+  {
+    key: "sleep",
+    label: "수면 기록",
+    icon: "🌙",
+    href: "/dashboard/checkin",
+  },
+  {
+    key: "mood",
+    label: "기분 체크인",
+    icon: "🐾",
+    href: "/dashboard/mood-checkin",
+  },
+  {
+    key: "nap",
+    label: "낮잠",
+    icon: "💤",
+    href: "/dashboard/nap-checkin",
+  },
+];
 
 export default async function TodayCard() {
   const user = await getCachedUser();
@@ -30,60 +50,47 @@ export default async function TodayCard() {
     (log) => log.start_time >= todayStartTs,
   ).length;
 
+  const statusMap: Record<string, string> = {
+    sleep: hasTodayLog ? "기록됨 ✓" : "없음",
+    mood: `${todayMoodCount}회`,
+    nap: `${todayNapCount}회`,
+  };
+  const doneMap: Record<string, boolean> = {
+    sleep: hasTodayLog,
+    mood: todayMoodCount > 0,
+    nap: todayNapCount > 0,
+  };
+
   return (
-    <section className="flex flex-1 flex-col pt-5 md:px-2">
-      <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-        오늘
-      </h2>
-      <ul className="mt-4 flex flex-1 flex-col space-y-0">
-        <li className="flex flex-1 items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-700 first:pt-0">
-          <span className="text-base text-zinc-600 dark:text-zinc-400">
-            수면 기록
-          </span>
-          <span className="flex items-center gap-2">
-            <span className="text-base font-medium text-zinc-900 dark:text-zinc-50">
-              {hasTodayLog ? "기록됨" : "없음"}
+    <section className="rounded-3xl bg-warm-white shadow-[0_4px_24px_rgba(200,149,108,0.12)] p-5 flex-1">
+      <h2 className="text-base font-extrabold text-bark-dark mb-4">오늘</h2>
+      <ul className="flex flex-col gap-3">
+        {LOG_ITEMS.map((item) => (
+          <li
+            key={item.key}
+            className="flex items-center justify-between"
+          >
+            <span className="flex items-center gap-2 text-sm font-medium text-bark-mid">
+              <span>{item.icon}</span>
+              {item.label}
             </span>
-            <Link
-              href="/dashboard/checkin"
-              className="rounded-lg bg-zinc-800 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
-            >
-              기록하기 →
-            </Link>
-          </span>
-        </li>
-        <li className="flex flex-1 items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-700">
-          <span className="text-base text-zinc-600 dark:text-zinc-400">
-            기분 체크인
-          </span>
-          <span className="flex items-center gap-2">
-            <span className="text-base font-medium text-zinc-900 dark:text-zinc-50">
-              {todayMoodCount}회
+            <span className="flex items-center gap-2">
+              <span
+                className={`text-sm font-bold ${
+                  doneMap[item.key] ? "text-paw-brown" : "text-bark-light"
+                }`}
+              >
+                {statusMap[item.key]}
+              </span>
+              <Link
+                href={item.href}
+                className="rounded-full bg-sleepy-yellow px-3 py-1 text-xs font-bold text-bark-dark transition hover:bg-sleepy-yellow-light"
+              >
+                기록하기
+              </Link>
             </span>
-            <Link
-              href="/dashboard/mood-checkin"
-              className="rounded-lg bg-zinc-800 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
-            >
-              기록하기 →
-            </Link>
-          </span>
-        </li>
-        <li className="flex flex-1 items-center justify-between py-4 border-b border-zinc-200 dark:border-zinc-700">
-          <span className="text-base text-zinc-600 dark:text-zinc-400">
-            낮잠
-          </span>
-          <span className="flex items-center gap-2">
-            <span className="text-base font-medium text-zinc-900 dark:text-zinc-50">
-              {todayNapCount}회
-            </span>
-            <Link
-              href="/dashboard/nap-checkin"
-              className="rounded-lg bg-zinc-800 px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 dark:bg-zinc-200 dark:text-zinc-900 dark:hover:bg-zinc-300"
-            >
-              기록하기 →
-            </Link>
-          </span>
-        </li>
+          </li>
+        ))}
       </ul>
     </section>
   );

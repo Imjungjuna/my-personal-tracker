@@ -9,20 +9,19 @@ export default async function UserHeader() {
     user.email?.split("@")[0] ??
     "사용자";
 
+  const now = new Date();
+  const dateStr = now.toLocaleDateString("ko-KR", {
+    month: "long",
+    day: "numeric",
+    weekday: "short",
+  });
+
   return (
-    <header className="flex items-center justify-between pb-6 border-b border-zinc-200 dark:border-zinc-700">
-      <div>
-        <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-          대시보드
-        </h1>
-        <p className="mt-1.5 text-base text-zinc-600 dark:text-zinc-400">
-          안녕하세요,{" "}
-          <strong className="text-zinc-900 dark:text-zinc-100">
-            {displayName}
-          </strong>
-          님.
-        </p>
-      </div>
+    <header className="px-4 pt-6 pb-2">
+      <p className="text-bark-mid text-sm font-medium">{dateStr}</p>
+      <h1 className="text-2xl font-extrabold text-bark-dark mt-0.5">
+        안녕하세요, {displayName}님 🐾
+      </h1>
     </header>
   );
 }
