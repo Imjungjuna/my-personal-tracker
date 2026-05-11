@@ -1,204 +1,248 @@
 "use client";
 
+import { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useActionState } from "react";
 import { submitOnboarding, type OnboardingState } from "./actions";
+import { JellyButton } from "@/components/ui/JellyButton";
+
+const STEPS = [
+  { id: 0, question: "몇 살이에요?" },
+  { id: 1, question: "성별은 어떻게 되세요?" },
+  { id: 2, question: "평소 몇 시에 자고 일어나요?" },
+  { id: 3, question: "낮잠은 얼마나 자요?" },
+];
+
+const slideVariants = {
+  enter: (dir: number) => ({ x: dir > 0 ? 300 : -300, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir: number) => ({ x: dir > 0 ? -300 : 300, opacity: 0 }),
+};
+
+const GENDER_OPTIONS = [
+  { value: "male", label: "남성 🙋‍♂️" },
+  { value: "female", label: "여성 🙋‍♀️" },
+  { value: "other", label: "기타 🙋" },
+];
+
+const NAP_OPTIONS = [
+  { value: "0", label: "안 자요" },
+  { value: "20", label: "20분" },
+  { value: "30", label: "30분" },
+  { value: "60", label: "1시간" },
+  { value: "90", label: "1시간 30분" },
+];
 
 export function OnboardingForm() {
+  const [step, setStep] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const formRef = useRef<HTMLFormElement>(null);
+
   const [state, formAction, pending] = useActionState(
     submitOnboarding,
     {} as OnboardingState,
   );
 
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [bedTime, setBedTime] = useState("23:00");
+  const [wakeTime, setWakeTime] = useState("07:00");
+  const [hasNarcolepsy, setHasNarcolepsy] = useState(false);
+  const [napDuration, setNapDuration] = useState("0");
+
+  const isLastStep = step === STEPS.length - 1;
+
+  function goNext() {
+    setDirection(1);
+    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+  }
+
+  function goPrev() {
+    setDirection(-1);
+    setStep((s) => Math.max(s - 1, 0));
+  }
+
+  const inputClass =
+    "w-full rounded-2xl border-2 border-paw-brown-light bg-cream px-4 py-3 text-bark-dark font-medium outline-none focus:border-paw-brown transition text-base";
+
   return (
-    <form action={formAction} className="flex flex-col gap-5">
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
-        Please fill in the following information to track your sleep conditions.
-      </p>
-
-      <div>
-        <label
-          htmlFor="age"
-          className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-        >
-          Age <span className="text-red-500">*</span>
-        </label>
-        <input
-          id="age"
-          type="number"
-          name="age"
-          min={1}
-          max={120}
-          required
-          placeholder="예: 30"
-          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
-        />
-        {state?.errors?.age && (
-          <p
-            className="mt-1 text-sm text-red-600 dark:text-red-400"
-            role="alert"
-          >
-            {state.errors.age}
-          </p>
-        )}
+    <div className="p-6">
+      {/* 진행 점 인디케이터 */}
+      <div className="flex justify-center gap-2 mb-6">
+        {STEPS.map((s) => (
+          <div
+            key={s.id}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              s.id === step
+                ? "w-6 bg-paw-brown"
+                : s.id < step
+                ? "w-2 bg-paw-brown-light"
+                : "w-2 bg-bark-light"
+            }`}
+          />
+        ))}
       </div>
 
-      <div>
-        <label
-          htmlFor="gender"
-          className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-        >
-          Gender
-        </label>
-        <select
-          id="gender"
-          name="gender"
-          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
-        >
-          <option value="">선택 안 함</option>
-          <option value="male">남성</option>
-          <option value="female">여성</option>
-          <option value="other">기타</option>
-        </select>
-        {state?.errors?.gender && (
-          <p
-            className="mt-1 text-sm text-red-600 dark:text-red-400"
-            role="alert"
+      {/* 단계 질문 + 입력 */}
+      <div className="overflow-hidden min-h-[160px]">
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={step}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ type: "spring", stiffness: 280, damping: 30 }}
           >
-            {state.errors.gender}
-          </p>
-        )}
-      </div>
+            <p className="text-lg font-bold text-bark-dark mb-4">
+              {STEPS[step].question}
+            </p>
 
-      <div className="flex items-center gap-2">
-        <input
-          id="has_narcolepsy"
-          type="checkbox"
-          name="has_narcolepsy"
-          value="on"
-          className="h-4 w-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700"
-        />
-        <label
-          htmlFor="has_narcolepsy"
-          className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
-        >
-          Has Narcolepsy (Sleep attacks, etc.)
-        </label>
-      </div>
+            {step === 0 && (
+              <input
+                type="number"
+                min={1}
+                max={120}
+                placeholder="예: 28"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                className={inputClass}
+              />
+            )}
 
-      <div>
-        <label
-          htmlFor="usual_sleep_quality"
-          className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-        >
-          평소 수면의 질 (1~5)
-        </label>
-        <select
-          id="usual_sleep_quality"
-          name="usual_sleep_quality"
-          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
-        >
-          <option value="">선택 안 함</option>
-          {[1, 2, 3, 4, 5].map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </select>
-        {state?.errors?.usual_sleep_quality && (
-          <p
-            className="mt-1 text-sm text-red-600 dark:text-red-400"
-            role="alert"
-          >
-            {state.errors.usual_sleep_quality}
-          </p>
-        )}
-      </div>
+            {step === 1 && (
+              <div className="grid grid-cols-3 gap-3">
+                {GENDER_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setGender(opt.value)}
+                    className={`rounded-2xl border-2 py-3 px-2 text-sm font-bold transition ${
+                      gender === opt.value
+                        ? "border-paw-brown bg-sleepy-yellow-light text-bark-dark"
+                        : "border-paw-brown-light bg-cream text-bark-mid hover:border-paw-brown"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
 
-      <div>
-        <label
-          htmlFor="usual_bed_time"
-          className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-        >
-          Usual Bed Time
-        </label>
-        <input
-          id="usual_bed_time"
-          type="time"
-          name="usual_bed_time"
-          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
-        />
-        {state?.errors?.usual_bed_time && (
-          <p
-            className="mt-1 text-sm text-red-600 dark:text-red-400"
-            role="alert"
-          >
-            {state.errors.usual_bed_time}
-          </p>
-        )}
-      </div>
+            {step === 2 && (
+              <div className="flex flex-col gap-3">
+                <div>
+                  <label className="text-sm font-semibold text-bark-mid mb-1 block">
+                    취침 시간
+                  </label>
+                  <input
+                    type="time"
+                    value={bedTime}
+                    onChange={(e) => setBedTime(e.target.value)}
+                    className={inputClass}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-semibold text-bark-mid mb-1 block">
+                    기상 시간
+                  </label>
+                  <input
+                    type="time"
+                    value={wakeTime}
+                    onChange={(e) => setWakeTime(e.target.value)}
+                    className={inputClass}
+                  />
+                </div>
+              </div>
+            )}
 
-      <div>
-        <label
-          htmlFor="usual_wake_time"
-          className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-        >
-          Usual Wake Time
-        </label>
-        <input
-          id="usual_wake_time"
-          type="time"
-          name="usual_wake_time"
-          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
-        />
-        {state?.errors?.usual_wake_time && (
-          <p
-            className="mt-1 text-sm text-red-600 dark:text-red-400"
-            role="alert"
-          >
-            {state.errors.usual_wake_time}
-          </p>
-        )}
-      </div>
-
-      <div>
-        <label
-          htmlFor="usual_nap_duration_minutes"
-          className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-        >
-          Usual Nap Duration (minutes)
-        </label>
-        <input
-          id="usual_nap_duration_minutes"
-          type="number"
-          name="usual_nap_duration_minutes"
-          min={0}
-          max={480}
-          placeholder="예: 30"
-          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 shadow-sm focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100"
-        />
-        {state?.errors?.usual_nap_duration_minutes && (
-          <p
-            className="mt-1 text-sm text-red-600 dark:text-red-400"
-            role="alert"
-          >
-            {state.errors.usual_nap_duration_minutes}
-          </p>
-        )}
+            {step === 3 && (
+              <div className="flex flex-col gap-4">
+                <div className="grid grid-cols-3 gap-2">
+                  {NAP_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setNapDuration(opt.value)}
+                      className={`rounded-2xl border-2 py-2.5 px-2 text-sm font-bold transition ${
+                        napDuration === opt.value
+                          ? "border-paw-brown bg-sleepy-yellow-light text-bark-dark"
+                          : "border-paw-brown-light bg-cream text-bark-mid hover:border-paw-brown"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={hasNarcolepsy}
+                    onChange={(e) => setHasNarcolepsy(e.target.checked)}
+                    className="h-5 w-5 rounded-md border-paw-brown-light accent-paw-brown"
+                  />
+                  <span className="text-sm font-medium text-bark-mid">
+                    기면증이 있어요 (수면발작 등)
+                  </span>
+                </label>
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {state?.errors?._form && (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+        <p className="mt-3 text-sm text-red-500 font-medium" role="alert">
           {state.errors._form}
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="rounded-lg bg-zinc-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-      >
-        {pending ? "Saving..." : "Complete and go to dashboard"}
-      </button>
-    </form>
+      <div className="flex gap-3 mt-6">
+        {step > 0 && (
+          <JellyButton
+            type="button"
+            onClick={goPrev}
+            className="flex-1 rounded-full border-2 border-paw-brown-light bg-cream py-3 font-bold text-bark-mid"
+          >
+            ← 이전
+          </JellyButton>
+        )}
+
+        {!isLastStep ? (
+          <JellyButton
+            type="button"
+            onClick={goNext}
+            className="flex-1 rounded-full bg-paw-brown py-3 font-bold text-warm-white shadow-sm"
+          >
+            다음 →
+          </JellyButton>
+        ) : (
+          <form action={formAction} className="flex-1" ref={formRef}>
+            <input type="hidden" name="age" value={age} />
+            <input type="hidden" name="gender" value={gender} />
+            <input type="hidden" name="usual_bed_time" value={bedTime} />
+            <input type="hidden" name="usual_wake_time" value={wakeTime} />
+            <input
+              type="hidden"
+              name="has_narcolepsy"
+              value={hasNarcolepsy ? "on" : ""}
+            />
+            <input
+              type="hidden"
+              name="usual_nap_duration_minutes"
+              value={napDuration}
+            />
+            <JellyButton
+              type="submit"
+              disabled={pending}
+              className="w-full rounded-full bg-paw-brown py-3 font-bold text-warm-white shadow-sm disabled:opacity-60"
+            >
+              {pending ? "저장 중..." : "완료! 대시보드로 →"}
+            </JellyButton>
+          </form>
+        )}
+      </div>
+    </div>
   );
 }
