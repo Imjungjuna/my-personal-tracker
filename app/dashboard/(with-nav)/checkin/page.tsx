@@ -1,36 +1,35 @@
-import { SleepLogForm } from "@/app/dashboard/(with-nav)/checkin/SleepLogForm";
-import type { SleepLogFormInitial } from "@/lib/types/supabase";
-import { verifySessionUsingGetClaims } from "@/lib/dal";
 import { getTodayISO } from "@/utils/date";
+import { getCachedUser, getLatestSleepLog, getCachedSleepLogs7Days } from "@/lib/dal";
+import { SleepLogForm } from "./SleepLogForm";
+import { SleepCharts } from "./SleepCharts";
+import { Suspense } from "react";
+import SleepChartWrapperSkeleton from "@/components/Skeleton/SleepChartWrapperSkeleton";
+import { SleepyDog } from "@/components/SleepyDog";
 
 export default async function CheckinPage() {
-  await verifySessionUsingGetClaims();
-
   const today = getTodayISO();
-
-  const initialLog: SleepLogFormInitial | null = {
-    sleep_date: today,
-    bed_time: "",
-    wake_time: "",
-  };
+  const user = await getCachedUser();
+  const [initialLog, sleepLogs] = await Promise.all([
+    getLatestSleepLog(user.id),
+    getCachedSleepLogs7Days(user.id),
+  ]);
 
   return (
-    <div className="min-h-screen bg-zinc-100 px-6 pb-8 pt-14 dark:bg-zinc-900">
-      <div className="mx-auto w-full max-w-sm">
-        <div className="mb-6">
-          <h1 className="text-xl font-semibold text-zinc-900 [text-wrap:balance] dark:text-zinc-50">
-            수면 기록
-          </h1>
+    <div className="min-h-screen bg-cream pb-10">
+      <div className="mx-auto max-w-3xl px-4 py-6 space-y-4">
+        <div className="flex flex-col items-center gap-2">
+          <SleepyDog state="sleeping" size="sm" />
+          <h1 className="text-xl font-extrabold text-bark-dark">수면 기록</h1>
         </div>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          취침·기상 시간을 입력해 주세요.
-        </p>
 
-        <div className="mt-8">
-          <SleepLogForm
-            today={today}
-            initialLog={initialLog}
-          />
+        <div className="rounded-3xl bg-warm-white shadow-[0_4px_24px_rgba(200,149,108,0.12)] p-6">
+          <SleepLogForm today={today} initialLog={initialLog} />
+        </div>
+
+        <div className="rounded-3xl bg-warm-white shadow-[0_4px_24px_rgba(200,149,108,0.12)] p-6">
+          <Suspense fallback={<SleepChartWrapperSkeleton />}>
+            <SleepCharts sleepPromise={Promise.resolve(sleepLogs)} />
+          </Suspense>
         </div>
       </div>
     </div>
