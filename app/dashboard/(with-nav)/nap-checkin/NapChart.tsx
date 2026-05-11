@@ -1,5 +1,6 @@
 "use client";
 
+import { use, useMemo } from "react";
 import {
   BarChart,
   Bar,
@@ -7,94 +8,90 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
+import { getTodayISO, durationMinutes, formatDuration } from "@/utils/date";
 
-import { use, useMemo } from "react";
-import { durationMinutes, formatDuration } from "@/utils/date";
+type NapLogRaw = { start_time: string; end_time: string };
 
-export type NapLogBeforeProcess = {
-  start_time: string;
-  end_time: string;
-};
-
-export function NapChart({
-  napPromise,
-}: {
-  napPromise: Promise<NapLogBeforeProcess[]>;
-}) {
-  const napLogsBeforeProcess: NapLogBeforeProcess[] = use(napPromise);
+export function NapChart({ napPromise }: { napPromise: Promise<NapLogRaw[]> }) {
+  const logs = use(napPromise);
 
   const chartData = useMemo(() => {
+    const today = getTodayISO();
     const byDate: Record<string, number> = {};
-    for (const row of napLogsBeforeProcess) {
+    for (const row of logs) {
       const date = row.start_time.slice(0, 10);
-      byDate[date] = (byDate[date] ?? 0) + durationMinutes(row.start_time, row.end_time);
+      if (date <= today) {
+        byDate[date] = (byDate[date] ?? 0) + durationMinutes(row.start_time, row.end_time);
+      }
     }
-
     return Array.from({ length: 7 }).map((_, i) => {
       const d = new Date();
       d.setDate(d.getDate() - (6 - i));
       const dateStr = d.toISOString().slice(0, 10);
-      const totalMin = byDate[dateStr];
-
+      const minutes = byDate[dateStr] ?? null;
       return {
         date: dateStr.slice(5).replace("-", "/"),
-        minutes: totalMin ?? null,
-        label: totalMin ? formatDuration(totalMin) : "기록 없음",
+        minutes,
+        label: minutes != null ? formatDuration(minutes) : "기록 없음",
       };
     });
-  }, [napLogsBeforeProcess]);
+  }, [logs]);
 
   return (
-    <div className="pt-5 pb-4 border-b border-zinc-200 dark:border-zinc-700 last:border-b-0">
-      <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-        최근 낮잠
+    <div>
+      <h3 className="text-base font-extrabold text-bark-dark mb-4">
+        💤 낮잠 시간
       </h3>
-      <div className="mt-4 h-64">
+      <div className="h-52">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
-            margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+            margin={{ top: 4, right: 4, left: -10, bottom: 0 }}
           >
             <XAxis
               dataKey="date"
-              tick={{ fontSize: 14 }}
-              stroke="#71717a"
+              tick={{ fontSize: 11, fill: "#A07850", fontFamily: "Nunito" }}
               tickLine={false}
+              axisLine={false}
             />
             <YAxis
-              width={45}
-              tick={{ fontSize: 14 }}
-              stroke="#71717a"
+              width={36}
+              tick={{ fontSize: 11, fill: "#A07850", fontFamily: "Nunito" }}
               tickLine={false}
-              tickFormatter={(v) => `${v}분`}
-              domain={[
-                0,
-                (max: number) => Math.max(60, Math.ceil(max / 30) * 30),
-              ]}
+              axisLine={false}
+              tickFormatter={(v) => `${v}m`}
             />
             <Tooltip
+              cursor={{ fill: "#FFF3C4", radius: 8 }}
               content={({ active, payload }) => {
                 if (!active || !payload?.length) return null;
                 const p = payload[0].payload;
                 return (
-                  <div className="rounded-lg border border-zinc-200 bg-white px-3 py-2 shadow-sm dark:border-zinc-600 dark:bg-zinc-800">
-                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                      {p.date}
-                    </p>
-                    <p className="font-medium text-zinc-900 dark:text-zinc-100">
-                      {p.label}
-                    </p>
+                  <div className="rounded-2xl border border-paw-brown-light bg-warm-white px-3 py-2 shadow-md">
+                    <p className="text-xs text-bark-mid font-medium">{p.date}</p>
+                    <p className="font-bold text-bark-dark">{p.label}</p>
                   </div>
                 );
               }}
             />
             <Bar
               dataKey="minutes"
-              radius={[4, 4, 0, 0]}
-              maxBarSize={48}
-              fill="#71717a"
-            />
+              radius={[8, 8, 0, 0]}
+              maxBarSize={40}
+              isAnimationActive
+              animationBegin={0}
+              animationDuration={800}
+              animationEasing="ease-out"
+            >
+              {chartData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={entry.minutes ? "#FFD97D" : "#E8C4A0"}
+                />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>

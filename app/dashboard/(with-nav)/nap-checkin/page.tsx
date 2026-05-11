@@ -1,23 +1,26 @@
-import { NapLogForm } from "@/app/dashboard/(with-nav)/nap-checkin/NapLogForm";
-import { verifySessionUsingGetClaims } from "@/lib/dal";
+import { NapLogForm } from "./NapLogForm";
+import { NapChart } from "./NapChart";
+import { getCachedUser, getCachedNapLogs7Days } from "@/lib/dal";
+import { SleepyDog } from "@/components/SleepyDog";
 
 export default async function NapCheckinPage() {
-  await verifySessionUsingGetClaims();
+  const user = await getCachedUser();
+  const napLogs = await getCachedNapLogs7Days(user.id);
 
   return (
-    <div className="min-h-screen bg-zinc-100 px-6 pb-8 pt-14 dark:bg-zinc-900">
-      <div className="mx-auto w-full max-w-sm">
-        <div className="mb-6">
-          <h1 className="text-xl font-semibold text-zinc-900 [text-wrap:balance] dark:text-zinc-50">
-            낮잠 기록
-          </h1>
+    <div className="min-h-screen bg-cream pb-10">
+      <div className="mx-auto max-w-3xl px-4 py-6 space-y-4">
+        <div className="flex flex-col items-center gap-2">
+          <SleepyDog state="sleeping" size="sm" />
+          <h1 className="text-xl font-extrabold text-bark-dark">낮잠 기록</h1>
         </div>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          낮잠 시작·종료 시각을 입력해 주세요.
-        </p>
 
-        <div className="mt-8">
+        <div className="rounded-3xl bg-warm-white shadow-[0_4px_24px_rgba(200,149,108,0.12)] p-6">
           <NapLogForm />
+        </div>
+
+        <div className="rounded-3xl bg-warm-white shadow-[0_4px_24px_rgba(200,149,108,0.12)] p-6">
+          <NapChart napPromise={Promise.resolve(napLogs)} />
         </div>
       </div>
     </div>

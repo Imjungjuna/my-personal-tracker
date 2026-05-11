@@ -2,7 +2,12 @@
 
 import { useActionState } from "react";
 import { saveNapLog, type SaveNapLogState } from "./actions";
+import { JellyButton } from "@/components/ui/JellyButton";
 import { getTodayISO } from "@/utils/date";
+
+const inputClass =
+  "w-full rounded-2xl border-2 border-paw-brown-light bg-cream px-4 py-3 text-bark-dark font-medium outline-none focus:border-paw-brown transition text-base";
+const labelClass = "mb-1.5 block text-sm font-bold text-bark-mid";
 
 export function NapLogForm() {
   const [state, formAction, pending] = useActionState(
@@ -13,97 +18,67 @@ export function NapLogForm() {
   return (
     <form action={formAction} className="flex flex-col gap-4">
       <div>
-        <label
-          htmlFor="nap_date"
-          className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-        >
-          날짜
-        </label>
+        <label htmlFor="nap_date" className={labelClass}>날짜</label>
         <input
           id="nap_date"
           type="date"
           name="nap_date"
           defaultValue={getTodayISO()}
           required
-          className="w-full rounded-lg bg-zinc-200/70 px-3 py-2.5 text-zinc-900 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-zinc-400 dark:bg-zinc-800 dark:text-zinc-100 dark:focus-visible:ring-zinc-500"
+          className={inputClass}
         />
-        {state?.errors?.nap_date && (
-          <p
-            className="mt-1 text-sm text-red-600 dark:text-red-400"
-            role="alert"
-          >
-            {state.errors.nap_date}
-          </p>
-        )}
       </div>
 
       <div>
-        <label
-          htmlFor="start_time"
-          className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-        >
-          시작 시각
-        </label>
+        <label htmlFor="start_time" className={labelClass}>낮잠 시작</label>
         <input
           id="start_time"
           type="time"
           name="start_time"
           required
-          className="w-full rounded-lg bg-zinc-200/70 px-3 py-2.5 text-zinc-900 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-zinc-400 dark:bg-zinc-800 dark:text-zinc-100 dark:focus-visible:ring-zinc-500"
+          className={inputClass}
         />
         {state?.errors?.start_time && (
-          <p
-            className="mt-1 text-sm text-red-600 dark:text-red-400"
-            role="alert"
-          >
+          <p className="mt-1 text-sm text-red-500 font-medium" role="alert">
             {state.errors.start_time}
           </p>
         )}
       </div>
 
       <div>
-        <label
-          htmlFor="end_time"
-          className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300"
-        >
-          종료 시각
-        </label>
+        <label htmlFor="end_time" className={labelClass}>낮잠 종료</label>
         <input
           id="end_time"
           type="time"
           name="end_time"
           required
-          className="w-full rounded-lg bg-zinc-200/70 px-3 py-2.5 text-zinc-900 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-zinc-400 dark:bg-zinc-800 dark:text-zinc-100 dark:focus-visible:ring-zinc-500"
+          className={inputClass}
         />
         {state?.errors?.end_time && (
-          <p
-            className="mt-1 text-sm text-red-600 dark:text-red-400"
-            role="alert"
-          >
+          <p className="mt-1 text-sm text-red-500 font-medium" role="alert">
             {state.errors.end_time}
           </p>
         )}
       </div>
 
       {state?.errors?._form && (
-        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+        <p className="text-sm text-red-500 font-medium" role="alert">
           {state.errors._form}
         </p>
       )}
-
       {state?.success && (
-        <p className="text-sm text-green-600 dark:text-green-400" role="status" aria-live="polite">
-          저장되었습니다.
+        <p className="text-sm text-paw-brown font-bold" role="status" aria-live="polite">
+          저장됐어요! 💤
         </p>
       )}
 
-      <button
+      <JellyButton
         type="submit"
         disabled={pending}
-        className="rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+        className="rounded-full bg-paw-brown py-3 font-bold text-warm-white shadow-sm disabled:opacity-60"
       >
-        {pending ? "저장 중..." : "저장"}
-      </button>
+        {pending ? "저장 중..." : "낮잠 저장하기 💤"}
+      </JellyButton>
     </form>
   );
 }
