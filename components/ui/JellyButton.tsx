@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { type ReactNode, type ComponentPropsWithoutRef } from "react";
 
-type JellyButtonProps = ComponentPropsWithoutRef<"button"> & {
+type JellyButtonProps = Omit<ComponentPropsWithoutRef<"button">, "onAnimationStart" | "onDrag" | "onDragEnd" | "onDragStart"> & {
   children: ReactNode;
   asChild?: false;
 };
