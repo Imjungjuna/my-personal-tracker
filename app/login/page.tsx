@@ -1,19 +1,23 @@
 import { GoogleSignInButton } from "./GoogleSignInButton";
+import { SleepyDog } from "@/components/SleepyDog";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-100 px-4 dark:bg-zinc-900">
-      <div className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-700 dark:bg-zinc-800">
-        <div className="mb-6 text-center">
-          <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-            로그인
-          </h1>
-          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-            계정으로 로그인하여 계속하세요
+    <main className="flex min-h-screen flex-col items-center justify-center bg-cream px-4 gap-8">
+      <div className="flex flex-col items-center gap-6 w-full max-w-sm">
+        <SleepyDog state="sleeping" size="md" />
+
+        <div className="text-center space-y-1">
+          <h1 className="text-2xl font-extrabold text-bark-dark">로그인</h1>
+          <p className="text-bark-mid text-sm font-medium">
+            계속하려면 로그인하세요
           </p>
         </div>
-        <GoogleSignInButton />
+
+        <div className="w-full rounded-3xl bg-warm-white p-8 shadow-[0_4px_24px_rgba(200,149,108,0.12)]">
+          <GoogleSignInButton />
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
