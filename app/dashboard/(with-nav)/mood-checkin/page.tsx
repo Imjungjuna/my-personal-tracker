@@ -1,23 +1,26 @@
-import { verifySessionUsingGetClaims } from "@/lib/dal";
-import { MoodLogForm } from "@/app/dashboard/(with-nav)/mood-checkin/MoodLogForm";
+import { MoodLogForm } from "./MoodLogForm";
+import { MoodChart } from "./MoodChart";
+import { getCachedUser, getCachedMoodLogs7Days } from "@/lib/dal";
+import { SleepyDog } from "@/components/SleepyDog";
 
 export default async function MoodCheckinPage() {
-  await verifySessionUsingGetClaims();
+  const user = await getCachedUser();
+  const moodLogs = await getCachedMoodLogs7Days(user.id);
 
   return (
-    <div className="min-h-screen bg-zinc-100 px-6 pb-8 pt-14 dark:bg-zinc-900">
-      <div className="mx-auto w-full max-w-sm">
-        <div className="mb-6">
-          <h1 className="text-xl font-semibold text-zinc-900 [text-wrap:balance] dark:text-zinc-50">
-            기분 기록
-          </h1>
+    <div className="min-h-screen bg-cream pb-10">
+      <div className="mx-auto max-w-3xl px-4 py-6 space-y-4">
+        <div className="flex flex-col items-center gap-2">
+          <SleepyDog state="happy" size="sm" />
+          <h1 className="text-xl font-extrabold text-bark-dark">기분 기록</h1>
         </div>
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
-          지금 기분을 1~5로 선택하고, 필요하면 메모를 남겨보세요.
-        </p>
 
-        <div className="mt-8">
+        <div className="rounded-3xl bg-warm-white shadow-[0_4px_24px_rgba(200,149,108,0.12)] p-6">
           <MoodLogForm />
+        </div>
+
+        <div className="rounded-3xl bg-warm-white shadow-[0_4px_24px_rgba(200,149,108,0.12)] p-6">
+          <MoodChart moodPromise={Promise.resolve(moodLogs)} />
         </div>
       </div>
     </div>
