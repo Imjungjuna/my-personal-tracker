@@ -57,7 +57,7 @@ function Eyes({ state }: { state: DogState }) {
           strokeLinecap="round"
           fill="none"
           animate={{ d: ["M97,71 Q103,75 109,71", "M97,73 Q103,75 109,73", "M97,71 Q103,75 109,71"] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" as const }}
         />
         <motion.path
           d="M116,71 Q122,75 128,71"
@@ -66,7 +66,7 @@ function Eyes({ state }: { state: DogState }) {
           strokeLinecap="round"
           fill="none"
           animate={{ d: ["M116,71 Q122,75 128,71", "M116,73 Q122,75 128,73", "M116,71 Q122,75 128,71"] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" as const, delay: 0.2 }}
         />
       </>
     );
@@ -80,13 +80,13 @@ function Eyes({ state }: { state: DogState }) {
           cx="103" cy="71" r="5.5"
           fill={DOG_COLORS.eyeStroke}
           animate={{ scale: [1, 1.15, 1] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" as const }}
         />
         <motion.circle
           cx="122" cy="71" r="5.5"
           fill={DOG_COLORS.eyeStroke}
           animate={{ scale: [1, 1.15, 1] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.15 }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" as const, delay: 0.15 }}
         />
         {/* 눈 하이라이트 */}
         <circle cx="106" cy="68" r="1.8" fill="white" />
@@ -115,7 +115,7 @@ function Tail({ state }: { state: DogState }) {
           transition: {
             duration: state === "running" ? 0.5 : 0.8,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: "easeInOut" as const,
           },
         }
       : {};
@@ -139,14 +139,14 @@ function Legs({ state }: { state: DogState }) {
     state === "running"
       ? {
           y: [0, -10, 0],
-          transition: { duration: 0.4, repeat: Infinity, ease: "easeInOut" },
+          transition: { duration: 0.4, repeat: Infinity, ease: "easeInOut" as const },
         }
       : {};
   const rightLegAnim =
     state === "running"
       ? {
           y: [0, -10, 0],
-          transition: { duration: 0.4, repeat: Infinity, ease: "easeInOut", delay: 0.2 },
+          transition: { duration: 0.4, repeat: Infinity, ease: "easeInOut" as const, delay: 0.2 },
         }
       : {};
 
@@ -184,7 +184,7 @@ export function SleepyDog({
             duration: 3,
             repeat: Infinity,
             repeatType: "mirror" as const,
-            ease: "easeInOut",
+            ease: "easeInOut" as const,
           },
         }
       : {};
@@ -197,7 +197,7 @@ export function SleepyDog({
           transition: {
             duration: 3,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: "easeInOut" as const,
           },
         }
       : {};
@@ -210,7 +210,7 @@ export function SleepyDog({
           transition: {
             duration: 2.5,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: "easeInOut" as const,
           },
         }
       : {};
@@ -223,7 +223,7 @@ export function SleepyDog({
           transition: {
             duration: 1.2,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: "easeInOut" as const,
           },
         }
       : {};
@@ -236,7 +236,7 @@ export function SleepyDog({
           transition: {
             duration: 0.8,
             repeat: Infinity,
-            ease: "easeInOut",
+            ease: "easeInOut" as const,
           },
         }
       : {};
