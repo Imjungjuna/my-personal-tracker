@@ -42,7 +42,7 @@ export function MoodLogForm() {
                   ? { scale: [1, 1.3, 1], y: [0, -6, 0] }
                   : { scale: 1, y: 0 }
               }
-              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+              transition={{ type: "tween", duration: 0.3, ease: "easeOut" }}
               className={`rounded-2xl p-2 border-2 transition ${
                 selected === n
                   ? "border-paw-brown bg-sleepy-yellow-light"
