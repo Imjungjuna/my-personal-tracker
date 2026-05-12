@@ -19,7 +19,9 @@ export function getTodayISO() {
 export function durationMinutes(bedTime: string, wakeTime: string): number {
   const bed = new Date(bedTime).getTime();
   const wake = new Date(wakeTime).getTime();
-  return Math.round((wake - bed) / 60_000);
+  const diff = Math.round((wake - bed) / 60_000);
+  // 자정을 넘기는 경우(취침 > 기상) 하루치 분을 더함
+  return diff < 0 ? diff + 24 * 60 : diff;
 }
 
 export function getTodayStartTs() {

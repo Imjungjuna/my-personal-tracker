@@ -26,6 +26,15 @@ function toTimestamptzISO(date: string, time: string): string {
   return `${date}T${normalized}`
 }
 
+function addOneDay(isoDate: string): string {
+  const d = new Date(`${isoDate}T00:00:00`)
+  d.setDate(d.getDate() + 1)
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
 export async function saveSleepLog(
   _prevState: SaveSleepLogState,
   formData: FormData
@@ -57,7 +66,9 @@ export async function saveSleepLog(
   const { sleep_date, bed_time, wake_time } = parsed.data
 
   const bedTimeISO = toTimestamptzISO(sleep_date, bed_time)
-  const wakeTimeISO = toTimestamptzISO(sleep_date, wake_time)
+  // 기상 시간이 취침 시간보다 이르면 자정을 넘긴 것 → 다음날 날짜로 저장
+  const wakeDate = wake_time < bed_time ? addOneDay(sleep_date) : sleep_date
+  const wakeTimeISO = toTimestamptzISO(wakeDate, wake_time)
 
   const { error: upsertError } = await supabase.from('sleep_logs').upsert(
     {
