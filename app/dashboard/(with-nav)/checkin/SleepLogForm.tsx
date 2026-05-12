@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { saveSleepLog, type SaveSleepLogState } from "./actions";
 import type { SleepLogFormInitial } from "@/lib/types/supabase";
 import { JellyButton } from "@/components/ui/JellyButton";
@@ -15,6 +15,17 @@ function timestamptzToTimeValue(iso: string | null): string {
   } catch {
     return "";
   }
+}
+
+function formatMonthDay(isoDate: string): string {
+  const [, month, day] = isoDate.split("-");
+  return `${parseInt(month)}월 ${parseInt(day)}일`;
+}
+
+function addOneDay(isoDate: string): string {
+  const d = new Date(`${isoDate}T00:00:00`);
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0, 10);
 }
 
 const inputClass =
@@ -44,18 +55,36 @@ export function SleepLogForm({
     ? timestamptzToTimeValue(initialLog.wake_time)
     : "";
 
+  const [sleepDate, setSleepDate] = useState(defaultSleepDate);
+
   return (
     <form action={formAction} className={`flex flex-col gap-4 ${className}`}>
       <div>
-        <label htmlFor="sleep_date" className={labelClass}>날짜</label>
-        <input
-          id="sleep_date"
-          type="date"
-          name="sleep_date"
-          defaultValue={defaultSleepDate}
-          required
-          className={inputClass}
-        />
+        <p className={labelClass}>날짜</p>
+        <div className="flex items-center gap-2">
+          {/* 왼쪽: 취침 날짜 선택 */}
+          <label className="relative cursor-pointer flex-1">
+            <span className="flex items-center justify-center rounded-2xl border-2 border-paw-brown-light bg-cream px-4 py-3 text-bark-dark font-bold text-base">
+              {formatMonthDay(sleepDate)}
+            </span>
+            <input
+              id="sleep_date"
+              type="date"
+              name="sleep_date"
+              value={sleepDate}
+              onChange={(e) => setSleepDate(e.target.value)}
+              required
+              className="absolute inset-0 w-full opacity-0 cursor-pointer"
+            />
+          </label>
+
+          <span className="text-bark-mid font-bold text-lg shrink-0">→</span>
+
+          {/* 오른쪽: 기상 날짜 (자동 계산, 읽기 전용) */}
+          <span className="flex-1 flex items-center justify-center rounded-2xl border-2 border-paw-brown-light bg-cream px-4 py-3 text-bark-mid font-bold text-base">
+            {formatMonthDay(addOneDay(sleepDate))}
+          </span>
+        </div>
         {state?.errors?.sleep_date && (
           <p className="mt-1 text-sm text-red-500 font-medium" role="alert">
             {state.errors.sleep_date}
