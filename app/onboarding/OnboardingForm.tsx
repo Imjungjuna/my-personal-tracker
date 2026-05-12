@@ -10,7 +10,8 @@ const STEPS = [
   { id: 0, question: "몇 살이에요?" },
   { id: 1, question: "성별은 어떻게 되세요?" },
   { id: 2, question: "평소 몇 시에 자고 일어나요?" },
-  { id: 3, question: "낮잠은 얼마나 자요?" },
+  { id: 3, question: "평소 수면의 질은 어때요?" },
+  { id: 4, question: "낮잠은 얼마나 자요?" },
 ];
 
 const slideVariants = {
@@ -47,6 +48,7 @@ export function OnboardingForm() {
   const [gender, setGender] = useState("");
   const [bedTime, setBedTime] = useState("23:00");
   const [wakeTime, setWakeTime] = useState("07:00");
+  const [sleepQuality, setSleepQuality] = useState<number | null>(null);
   const [hasNarcolepsy, setHasNarcolepsy] = useState(false);
   const [napDuration, setNapDuration] = useState("0");
 
@@ -158,6 +160,31 @@ export function OnboardingForm() {
             )}
 
             {step === 3 && (
+              <div className="flex flex-col gap-3">
+                <div className="flex justify-between gap-2">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setSleepQuality(n)}
+                      className={`flex-1 rounded-2xl border-2 py-3 text-sm font-bold transition ${
+                        sleepQuality === n
+                          ? "border-paw-brown bg-sleepy-yellow-light text-bark-dark"
+                          : "border-paw-brown-light bg-cream text-bark-mid hover:border-paw-brown"
+                      }`}
+                    >
+                      {n}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex justify-between px-1 text-xs text-bark-light font-medium">
+                  <span>매우 나쁨</span>
+                  <span>매우 좋음</span>
+                </div>
+              </div>
+            )}
+
+            {step === 4 && (
               <div className="flex flex-col gap-4">
                 <div className="grid grid-cols-3 gap-2">
                   {NAP_OPTIONS.map((opt) => (
@@ -188,6 +215,7 @@ export function OnboardingForm() {
                 </label>
               </div>
             )}
+
           </motion.div>
         </AnimatePresence>
       </div>
@@ -223,6 +251,11 @@ export function OnboardingForm() {
             <input type="hidden" name="gender" value={gender} />
             <input type="hidden" name="usual_bed_time" value={bedTime} />
             <input type="hidden" name="usual_wake_time" value={wakeTime} />
+            <input
+              type="hidden"
+              name="usual_sleep_quality"
+              value={sleepQuality ?? ""}
+            />
             <input
               type="hidden"
               name="has_narcolepsy"
