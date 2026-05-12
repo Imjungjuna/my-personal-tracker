@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { saveSleepLog, type SaveSleepLogState } from "./actions";
 import type { SleepLogFormInitial } from "@/lib/types/supabase";
 import { JellyButton } from "@/components/ui/JellyButton";
@@ -56,6 +56,7 @@ export function SleepLogForm({
     : "";
 
   const [sleepDate, setSleepDate] = useState(defaultSleepDate);
+  const dateInputRef = useRef<HTMLInputElement>(null);
 
   return (
     <form action={formAction} className={`flex flex-col gap-4 ${className}`}>
@@ -63,20 +64,23 @@ export function SleepLogForm({
         <p className={labelClass}>날짜</p>
         <div className="flex items-center gap-2">
           {/* 왼쪽: 취침 날짜 선택 */}
-          <label className="relative cursor-pointer flex-1">
-            <span className="flex items-center justify-center rounded-2xl border-2 border-paw-brown-light bg-cream px-4 py-3 text-bark-dark font-bold text-base">
-              {formatMonthDay(sleepDate)}
-            </span>
-            <input
-              id="sleep_date"
-              type="date"
-              name="sleep_date"
-              value={sleepDate}
-              onChange={(e) => setSleepDate(e.target.value)}
-              required
-              className="absolute inset-0 w-full opacity-0 cursor-pointer"
-            />
-          </label>
+          <button
+            type="button"
+            onClick={() => dateInputRef.current?.showPicker()}
+            className="flex-1 flex items-center justify-center rounded-2xl border-2 border-paw-brown-light bg-cream px-4 py-3 text-bark-dark font-bold text-base cursor-pointer hover:border-paw-brown transition"
+          >
+            {formatMonthDay(sleepDate)}
+          </button>
+          <input
+            ref={dateInputRef}
+            id="sleep_date"
+            type="date"
+            name="sleep_date"
+            value={sleepDate}
+            onChange={(e) => setSleepDate(e.target.value)}
+            required
+            className="sr-only"
+          />
 
           <span className="text-bark-mid font-bold text-lg shrink-0">→</span>
 
