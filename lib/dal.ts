@@ -90,12 +90,34 @@ export const getCachedNapLogs7Days = cache(
 );
 
 export const getLatestSleepLog = cache(async (userId: string) => {
-  const supabase = await createClient();
+  const supabase = await createClient()
   const { data } = await supabase
-    .from("sleep_logs")
-    .select("sleep_date, bed_time, wake_time")
-    .eq("user_id", userId)
-    .order("sleep_date", { ascending: false })
-    .limit(1);
-  return data?.[0] ?? null;
-});
+    .from('sleep_logs')
+    .select('sleep_date, bed_time, wake_time, sleep_quality')
+    .eq('user_id', userId)
+    .order('sleep_date', { ascending: false })
+    .limit(1)
+  return data?.[0] ?? null
+})
+
+export const getTodaySleepLog = cache(async (userId: string, todayISO: string) => {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('sleep_logs')
+    .select('sleep_date, bed_time, wake_time, sleep_quality')
+    .eq('user_id', userId)
+    .eq('sleep_date', todayISO)
+    .single()
+  return data ?? null
+})
+
+export const getTodayConditionLog = cache(async (userId: string, todayISO: string) => {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('condition_logs')
+    .select('log_date, mental_condition, physical_energy, muscle_soreness, did_exercise, yesterday_rpe')
+    .eq('user_id', userId)
+    .eq('log_date', todayISO)
+    .single()
+  return data ?? null
+})
