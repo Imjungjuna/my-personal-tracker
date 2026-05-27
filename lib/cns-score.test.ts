@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { calculateCnsScore } from './cns-score'
 
 describe('calculateCnsScore', () => {
-  it('docs 예제 역방향 처리 포함: score=71, status=Recovered', () => {
+  it('기준 케이스 (muscleSoreness=2, RPE=7): score=71, status=Recovered', () => {
     const result = calculateCnsScore({
       sleepDuration: 8,
       sleepQuality: 4,
@@ -13,10 +13,9 @@ describe('calculateCnsScore', () => {
       yesterdayRpe: 7,
       hrv: null,
     })
-    // sDurationScore=100, sQualityScore=75
+    // muscleSoreness=2 → normalize=25 → inverted: 100-25=75
     // finalSleepScore=100*0.4+75*0.6=85
-    // mScore=75, pScore=75, bScore=25→(100-25)=75
-    // finalCondScore=75*0.4+75*0.4+75*0.2=30+30+15=75
+    // finalCondScore=75*0.4+75*0.4+75*0.2=75
     // loadScore=100-7*10=30
     // total=85*0.45+75*0.35+30*0.20=38.25+26.25+6=70.5→71
     expect(result.score).toBe(71)
