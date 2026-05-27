@@ -4,6 +4,7 @@ export type SleepLog = {
   sleep_date: string
   bed_time: string
   wake_time: string
+  sleep_quality: number | null
   created_at: string | null
 }
 
@@ -11,6 +12,7 @@ export type SleepLogFormInitial = {
   sleep_date: string
   bed_time: string
   wake_time: string
+  sleep_quality: number | null
 }
 
 export type Profile = {
@@ -39,6 +41,18 @@ export type NapLog = {
   user_id: string
   start_time: string
   end_time: string
+  created_at: string | null
+}
+
+export type ConditionLog = {
+  id: string
+  user_id: string
+  log_date: string
+  mental_condition: number
+  physical_energy: number
+  muscle_soreness: number
+  did_exercise: boolean
+  yesterday_rpe: number
   created_at: string | null
 }
 
