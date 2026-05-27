@@ -10,6 +10,7 @@ export type SaveSleepLogState = {
     sleep_date?: string
     bed_time?: string
     wake_time?: string
+    sleep_quality?: string
     _form?: string
   }
   success?: boolean
@@ -19,6 +20,7 @@ const sleepLogSchema = z.object({
   sleep_date: z.string().min(1, '날짜를 선택해 주세요.'),
   bed_time: z.string().min(1, '취침 시간을 입력해 주세요.'),
   wake_time: z.string().min(1, '기상 시간을 입력해 주세요.'),
+  sleep_quality: z.coerce.number().int().min(1).max(5).nullable().optional(),
 })
 
 function toTimestamptzISO(date: string, time: string): string {
@@ -50,6 +52,7 @@ export async function saveSleepLog(
     sleep_date: formData.get('sleep_date'),
     bed_time: formData.get('bed_time'),
     wake_time: formData.get('wake_time'),
+    sleep_quality: formData.get('sleep_quality') || null,
   }
 
   const parsed = sleepLogSchema.safeParse(raw)
@@ -63,10 +66,9 @@ export async function saveSleepLog(
     return { errors }
   }
 
-  const { sleep_date, bed_time, wake_time } = parsed.data
+  const { sleep_date, bed_time, wake_time, sleep_quality } = parsed.data
 
   const bedTimeISO = toTimestamptzISO(sleep_date, bed_time)
-  // 기상 시간이 취침 시간보다 이르면 자정을 넘긴 것 → 다음날 날짜로 저장
   const wakeDate = wake_time < bed_time ? addOneDay(sleep_date) : sleep_date
   const wakeTimeISO = toTimestamptzISO(wakeDate, wake_time)
 
@@ -76,6 +78,7 @@ export async function saveSleepLog(
       sleep_date,
       bed_time: bedTimeISO,
       wake_time: wakeTimeISO,
+      sleep_quality: sleep_quality ?? null,
     },
     { onConflict: 'user_id,sleep_date' }
   )

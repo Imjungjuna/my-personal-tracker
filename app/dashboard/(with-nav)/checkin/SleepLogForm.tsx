@@ -36,6 +36,14 @@ const inputClass =
 
 const labelClass = "mb-1.5 block text-sm font-bold text-bark-mid";
 
+const SLEEP_QUALITY_LABELS: Record<number, string> = {
+  1: "매우 나쁨",
+  2: "나쁨",
+  3: "보통",
+  4: "좋음",
+  5: "매우 좋음",
+};
+
 export function SleepLogForm({
   today,
   initialLog,
@@ -59,6 +67,9 @@ export function SleepLogForm({
     : "";
 
   const [sleepDate, setSleepDate] = useState(defaultSleepDate);
+  const [sleepQuality, setSleepQuality] = useState<number | null>(
+    initialLog?.sleep_quality ?? null,
+  );
   const dateInputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -66,7 +77,6 @@ export function SleepLogForm({
       <div>
         <p className={labelClass}>날짜</p>
         <div className="flex items-center gap-2">
-          {/* 왼쪽: 취침 날짜 선택 */}
           <button
             type="button"
             onClick={() => dateInputRef.current?.showPicker()}
@@ -84,10 +94,7 @@ export function SleepLogForm({
             required
             className="sr-only"
           />
-
           <span className="text-bark-mid font-bold text-lg shrink-0">→</span>
-
-          {/* 오른쪽: 기상 날짜 (자동 계산, 읽기 전용) */}
           <span className="flex-1 flex items-center justify-center rounded-2xl border-2 border-paw-brown-light bg-cream px-4 py-3 text-bark-mid font-bold text-base">
             {formatMonthDay(addOneDay(sleepDate))}
           </span>
@@ -131,6 +138,32 @@ export function SleepLogForm({
             {state.errors.wake_time}
           </p>
         )}
+      </div>
+
+      {/* 수면 질 */}
+      <div>
+        <p className={labelClass}>수면 질 (선택)</p>
+        <input type="hidden" name="sleep_quality" value={sleepQuality ?? ""} />
+        <div className="flex gap-2">
+          {([1, 2, 3, 4, 5] as const).map((val) => (
+            <button
+              key={val}
+              type="button"
+              onClick={() => setSleepQuality(sleepQuality === val ? null : val)}
+              className={`flex-1 rounded-2xl border-2 py-3 text-sm font-bold transition ${
+                sleepQuality === val
+                  ? "border-paw-brown bg-sleepy-yellow text-bark-dark"
+                  : "border-paw-brown-light bg-cream text-bark-mid hover:border-paw-brown"
+              }`}
+              title={SLEEP_QUALITY_LABELS[val]}
+            >
+              {val}
+            </button>
+          ))}
+        </div>
+        <p className="mt-1 text-xs text-bark-light">
+          1 = 매우 나쁨 · 5 = 매우 좋음
+        </p>
       </div>
 
       {state?.errors?._form && (
