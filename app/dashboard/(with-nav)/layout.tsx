@@ -8,6 +8,7 @@ const NAV_ITEMS = [
   { href: "/dashboard/checkin", label: "🌙 수면" },
   { href: "/dashboard/mood-checkin", label: "🐾 기분" },
   { href: "/dashboard/nap-checkin", label: "💤 낮잠" },
+  { href: "/dashboard/condition-checkin", label: "💪 컨디션" },
 ];
 
 export default function WithNavLayout({
