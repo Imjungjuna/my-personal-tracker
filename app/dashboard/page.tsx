@@ -4,6 +4,8 @@ import {
   getCachedSleepLogs7Days,
   getCachedMoodLogs7Days,
   getCachedNapLogs7Days,
+  getTodayConditionLog,
+  getTodaySleepLog,
 } from "@/lib/dal";
 import Header from "@/components/Header";
 import TodayCard from "@/components/TodayCard";
@@ -12,9 +14,11 @@ import { SleepCharts } from "@/app/dashboard/(with-nav)/checkin/SleepCharts";
 import { MoodChart } from "@/app/dashboard/(with-nav)/mood-checkin/MoodChart";
 import { NapChart } from "@/app/dashboard/(with-nav)/nap-checkin/NapChart";
 import { DogStatusWidget } from "@/components/DogStatusWidget";
-import { durationMinutes } from "@/utils/date";
-import { getTodayISO, getTodayStartTs } from "@/utils/date";
+import { CnsScoreCard } from "@/components/CnsScoreCard";
+import { durationMinutes, getTodayISO, getTodayStartTs } from "@/utils/date";
+import { calculateCnsScore } from "@/lib/cns-score";
 import type { DogState } from "@/components/SleepyDog";
+import type { CnsStatus } from "@/lib/cns-score";
 import HeaderSkeleton from "@/components/Skeleton/HeaderSkeleton";
 import TodayCardSkeleton from "@/components/Skeleton/TodayCardSkeleton";
 import Last7DaysCardSkeleton from "@/components/Skeleton/Last7DaysCardSkeleton";
@@ -47,9 +51,38 @@ async function resolveDogState(): Promise<DogState> {
   return "sleeping";
 }
 
+async function resolveCnsScore(): Promise<{ score: number | null; status: CnsStatus | null }> {
+  const user = await getCachedUser();
+  const todayISO = getTodayISO();
+
+  const [conditionLog, sleepLog] = await Promise.all([
+    getTodayConditionLog(user.id, todayISO),
+    getTodaySleepLog(user.id, todayISO),
+  ]);
+
+  if (!conditionLog || !sleepLog || sleepLog.sleep_quality == null) {
+    return { score: null, status: null };
+  }
+
+  const sleepDuration = durationMinutes(sleepLog.bed_time, sleepLog.wake_time) / 60;
+  const result = calculateCnsScore({
+    sleepDuration,
+    sleepQuality: sleepLog.sleep_quality,
+    mentalCondition: conditionLog.mental_condition,
+    physicalEnergy: conditionLog.physical_energy,
+    muscleSoreness: conditionLog.muscle_soreness,
+    didExercise: conditionLog.did_exercise,
+    yesterdayRpe: conditionLog.yesterday_rpe,
+    hrv: null,
+  });
+
+  return result;
+}
+
 export default async function DashboardPage() {
   const user = await getCachedUser();
   const dogState = await resolveDogState();
+  const cnsResult = await resolveCnsScore();
 
   const sleepPromise = getCachedSleepLogs7Days(user.id);
   const moodPromise = getCachedMoodLogs7Days(user.id);
@@ -68,6 +101,8 @@ export default async function DashboardPage() {
             <TodayCard />
           </Suspense>
         </div>
+
+        <CnsScoreCard score={cnsResult.score} status={cnsResult.status} />
 
         <Suspense fallback={<Last7DaysCardSkeleton />}>
           <Last7DaysCard />

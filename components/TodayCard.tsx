@@ -5,6 +5,7 @@ import {
   getCachedSleepLogs7Days,
   getCachedMoodLogs7Days,
   getCachedNapLogs7Days,
+  getTodayConditionLog,
 } from "@/lib/dal";
 import { getTodayStartTs, getTodayISO } from "@/utils/date";
 
@@ -27,6 +28,12 @@ const LOG_ITEMS = [
     icon: "💤",
     href: "/dashboard/nap-checkin",
   },
+  {
+    key: "condition",
+    label: "컨디션",
+    icon: "💪",
+    href: "/dashboard/condition-checkin",
+  },
 ];
 
 export default async function TodayCard() {
@@ -36,10 +43,11 @@ export default async function TodayCard() {
   const todayISO = getTodayISO();
   const todayStartTs = getTodayStartTs();
 
-  const [sleepLogs, moodLogs, napLogs] = await Promise.all([
+  const [sleepLogs, moodLogs, napLogs, conditionLog] = await Promise.all([
     getCachedSleepLogs7Days(user.id),
     getCachedMoodLogs7Days(user.id),
     getCachedNapLogs7Days(user.id),
+    getTodayConditionLog(user.id, todayISO),
   ]);
 
   const hasTodayLog = sleepLogs.some((log) => log.sleep_date === todayISO);
@@ -49,16 +57,19 @@ export default async function TodayCard() {
   const todayNapCount = napLogs.filter(
     (log) => log.start_time >= todayStartTs,
   ).length;
+  const hasConditionLog = conditionLog !== null;
 
   const statusMap: Record<string, string> = {
     sleep: hasTodayLog ? "기록됨 ✓" : "없음",
     mood: `${todayMoodCount}회`,
     nap: `${todayNapCount}회`,
+    condition: hasConditionLog ? "기록됨 ✓" : "없음",
   };
   const doneMap: Record<string, boolean> = {
     sleep: hasTodayLog,
     mood: todayMoodCount > 0,
     nap: todayNapCount > 0,
+    condition: hasConditionLog,
   };
 
   return (
