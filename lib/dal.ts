@@ -115,7 +115,7 @@ export const getTodayConditionLog = cache(async (userId: string, todayISO: strin
   const supabase = await createClient()
   const { data } = await supabase
     .from('condition_logs')
-    .select('log_date, mental_condition, physical_energy, muscle_soreness, did_exercise, yesterday_rpe')
+    .select('id, user_id, log_date, mental_condition, physical_energy, muscle_soreness, did_exercise, yesterday_rpe, created_at')
     .eq('user_id', userId)
     .eq('log_date', todayISO)
     .single()
