@@ -40,6 +40,8 @@ export function SleepLogForm({ className }: { className?: string }) {
 
   const [sleepDate, setSleepDate] = useState(getISODaysAgo(1));
   const [sleepQuality, setSleepQuality] = useState<number | null>(null);
+  const [bedTime, setBedTime] = useState("23:00");
+  const isPastMidnight = bedTime >= "00:00" && bedTime < "12:00";
   const dateInputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -78,10 +80,16 @@ export function SleepLogForm({ className }: { className?: string }) {
           id="bed_time"
           type="time"
           name="bed_time"
-          defaultValue="23:00"
+          value={bedTime}
+          onChange={(e) => setBedTime(e.target.value)}
           required
           className={inputClass}
         />
+        {isPastMidnight && (
+          <p className="mt-1.5  w-fit ml-2 text-sm text-red-500 font-medium">
+            자정 넘어 취침하셨어도 수면 날짜는 전날 기준으로 표시돼요.
+          </p>
+        )}
         {state?.errors?.bed_time && (
           <p className="mt-1 text-sm text-red-500 font-medium" role="alert">
             {state.errors.bed_time}
