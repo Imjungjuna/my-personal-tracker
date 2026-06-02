@@ -50,7 +50,7 @@ export default async function TodayCard() {
     getTodayConditionLog(user.id, todayISO),
   ]);
 
-  const hasTodayLog = sleepLogs.some((log) => log.sleep_date === todayISO);
+  const hasTodayLog = sleepLogs.some((log) => log.wake_date === todayISO);
   const todayMoodCount = moodLogs.filter(
     (log) => log.log_time >= todayStartTs,
   ).length;

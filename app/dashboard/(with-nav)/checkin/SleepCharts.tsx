@@ -13,7 +13,7 @@ import {
 import { getTodayISO, durationMinutes, formatDuration } from "@/utils/date";
 
 export type SleepLogRaw = {
-  sleep_date: string;
+  wake_date: string;
   bed_time: string;
   wake_time: string;
 };
@@ -36,8 +36,8 @@ export function SleepCharts({
     const today = getTodayISO();
     const byDate: Record<string, { minutes: number; bedTime: string; wakeTime: string }> = {};
     for (const row of logs) {
-      if (row.sleep_date <= today) {
-        byDate[row.sleep_date] = {
+      if (row.wake_date <= today) {
+        byDate[row.wake_date] = {
           minutes: durationMinutes(row.bed_time, row.wake_time),
           bedTime: formatTime(row.bed_time),
           wakeTime: formatTime(row.wake_time),

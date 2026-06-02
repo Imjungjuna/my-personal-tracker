@@ -1,18 +1,11 @@
 export type SleepLog = {
   id: string
   user_id: string
-  sleep_date: string
+  wake_date: string
   bed_time: string
   wake_time: string
   sleep_quality: number | null
   created_at: string | null
-}
-
-export type SleepLogFormInitial = {
-  sleep_date: string
-  bed_time: string
-  wake_time: string
-  sleep_quality: number | null
 }
 
 export type Profile = {

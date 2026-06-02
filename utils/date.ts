@@ -1,19 +1,11 @@
-export function getDateDaysAgo(days: number): string {
-  const now = new Date();
-  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-  const kstDate = new Date(utc + 9 * 3600000);
-
-  kstDate.setDate(kstDate.getDate() - days);
-
-  const year = kstDate.getFullYear();
-  const month = String(kstDate.getMonth() + 1).padStart(2, "0");
-  const day = String(kstDate.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
+export function getISODaysAgo(days: number): string {
+  const kstDate = new Date(Date.now() + 9 * 60 * 60 * 1000);
+  kstDate.setUTCDate(kstDate.getUTCDate() - days);
+  return kstDate.toISOString().slice(0, 10);
+} // output example: "2026-06-03"
 
 export function getTodayISO() {
-  return getDateDaysAgo(0);
+  return getISODaysAgo(0);
 }
 
 export function durationMinutes(bedTime: string, wakeTime: string): number {
@@ -25,12 +17,12 @@ export function durationMinutes(bedTime: string, wakeTime: string): number {
 }
 
 export function getTodayStartTs() {
-  const todayDate = getDateDaysAgo(0);
+  const todayDate = getISODaysAgo(0);
   return new Date(`${todayDate}T00:00:00+09:00`).toISOString();
 }
 
 export function getLogTimeFromDaysAgo(days: number): string {
-  const targetDate = getDateDaysAgo(days);
+  const targetDate = getISODaysAgo(days);
   return new Date(`${targetDate}T00:00:00+09:00`).toISOString();
 }
 

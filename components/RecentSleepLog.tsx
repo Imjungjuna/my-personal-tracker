@@ -1,9 +1,9 @@
 import { getCachedUser, getCachedSleepLogs7Days } from "@/lib/dal";
-import { getDateDaysAgo, durationMinutes, formatDuration } from "@/utils/date";
+import { getISODaysAgo, durationMinutes, formatDuration } from "@/utils/date";
 
 export default async function RecentSleepLog() {
   const user = await getCachedUser();
-  const sevenDaysAgoDate = getDateDaysAgo(6);
+  const sevenDaysAgoDate = getISODaysAgo(6);
   const sleepLogs = await getCachedSleepLogs7Days(user.id, sevenDaysAgoDate);
 
   const lastLog = sleepLogs[0];
@@ -18,7 +18,7 @@ export default async function RecentSleepLog() {
         최근 기록
       </p>
       <p className="mt-1 text-base font-medium text-zinc-900 dark:text-zinc-50">
-        {lastLog.sleep_date} · {formatDuration(durationMin)}
+        {lastLog.wake_date} · {formatDuration(durationMin)}
       </p>
     </div>
   );

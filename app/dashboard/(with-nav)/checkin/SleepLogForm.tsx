@@ -2,20 +2,8 @@
 
 import { useActionState, useRef, useState } from "react";
 import { saveSleepLog, type SaveSleepLogState } from "./actions";
-import type { SleepLogFormInitial } from "@/lib/types/supabase";
 import { JellyButton } from "@/components/ui/JellyButton";
 
-function timestamptzToTimeValue(iso: string | null): string {
-  if (!iso) return "";
-  try {
-    const d = new Date(iso);
-    const h = d.getHours().toString().padStart(2, "0");
-    const m = d.getMinutes().toString().padStart(2, "0");
-    return `${h}:${m}`;
-  } catch {
-    return "";
-  }
-}
 
 function formatMonthDay(isoDate: string): string {
   const [, month, day] = isoDate.split("-");
@@ -44,32 +32,22 @@ const SLEEP_QUALITY_LABELS: Record<number, string> = {
   5: "매우 좋음",
 };
 
-export function SleepLogForm({
-  today,
-  initialLog,
-  className = "",
-}: {
-  today: string;
-  initialLog: SleepLogFormInitial | null;
-  className?: string;
-}) {
+function getTodayLocalDate(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+export function SleepLogForm({ className = "" }: { className?: string }) {
   const [state, formAction, pending] = useActionState(
     saveSleepLog,
     {} as SaveSleepLogState,
   );
 
-  const defaultSleepDate = initialLog?.sleep_date ?? today;
-  const defaultBedTime = initialLog?.bed_time
-    ? timestamptzToTimeValue(initialLog.bed_time)
-    : "";
-  const defaultWakeTime = initialLog?.wake_time
-    ? timestamptzToTimeValue(initialLog.wake_time)
-    : "";
-
-  const [sleepDate, setSleepDate] = useState(defaultSleepDate);
-  const [sleepQuality, setSleepQuality] = useState<number | null>(
-    initialLog?.sleep_quality ?? null,
-  );
+  const [sleepDate, setSleepDate] = useState(getTodayLocalDate);
+  const [sleepQuality, setSleepQuality] = useState<number | null>(null);
   const dateInputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -112,7 +90,7 @@ export function SleepLogForm({
           id="bed_time"
           type="time"
           name="bed_time"
-          defaultValue={defaultBedTime}
+          defaultValue="23:00"
           required
           className={inputClass}
         />
@@ -129,7 +107,7 @@ export function SleepLogForm({
           id="wake_time"
           type="time"
           name="wake_time"
-          defaultValue={defaultWakeTime}
+          defaultValue="07:00"
           required
           className={inputClass}
         />

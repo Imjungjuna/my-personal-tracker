@@ -37,21 +37,32 @@ async function resolveDogState(): Promise<DogState> {
     getCachedNapLogs7Days(user.id),
   ]);
 
-  const todaySleep = sleepLogs.find((l) => l.sleep_date === todayISO);
-  const todayMoodCount = moodLogs.filter((l) => l.log_time >= todayStartTs).length;
-  const todayNapCount = napLogs.filter((l) => l.start_time >= todayStartTs).length;
+  const todaySleep = sleepLogs.find((l) => l.wake_date === todayISO);
+  const todayMoodCount = moodLogs.filter(
+    (l) => l.log_time >= todayStartTs,
+  ).length;
+  const todayNapCount = napLogs.filter(
+    (l) => l.start_time >= todayStartTs,
+  ).length;
 
   if (!todaySleep) return "waiting";
 
   const sleepMin = durationMinutes(todaySleep.bed_time, todaySleep.wake_time);
 
-  if (todayMoodCount > 0 && todayNapCount > 0 && sleepMin >= 360) return "running";
+  if (todayMoodCount > 0 && todayNapCount > 0 && sleepMin >= 360)
+    return "running";
   if (sleepMin >= 420) return "happy";
   if (sleepMin < 360) return "drowsy";
   return "sleeping";
 }
 
-async function resolveCnsScore(): Promise<{ score: number | null; status: CnsStatus | null }> {
+type CnsReason = "no_sleep" | "no_condition" | "no_sleep_quality" | null;
+
+async function resolveCnsScore(): Promise<{
+  score: number | null;
+  status: CnsStatus | null;
+  reason: CnsReason;
+}> {
   const user = await getCachedUser();
   const todayISO = getTodayISO();
 
@@ -60,11 +71,14 @@ async function resolveCnsScore(): Promise<{ score: number | null; status: CnsSta
     getTodaySleepLog(user.id, todayISO),
   ]);
 
-  if (!conditionLog || !sleepLog || sleepLog.sleep_quality == null) {
-    return { score: null, status: null };
-  }
+  if (!sleepLog) return { score: null, status: null, reason: "no_sleep" };
+  if (!conditionLog)
+    return { score: null, status: null, reason: "no_condition" };
+  if (sleepLog.sleep_quality == null)
+    return { score: null, status: null, reason: "no_sleep_quality" };
 
-  const sleepDuration = durationMinutes(sleepLog.bed_time, sleepLog.wake_time) / 60;
+  const sleepDuration =
+    durationMinutes(sleepLog.bed_time, sleepLog.wake_time) / 60;
   const result = calculateCnsScore({
     sleepDuration,
     sleepQuality: sleepLog.sleep_quality,
@@ -76,7 +90,7 @@ async function resolveCnsScore(): Promise<{ score: number | null; status: CnsSta
     hrv: null,
   });
 
-  return result;
+  return { ...result, reason: null };
 }
 
 export default async function DashboardPage() {
@@ -102,7 +116,11 @@ export default async function DashboardPage() {
           </Suspense>
         </div>
 
-        <CnsScoreCard score={cnsResult.score} status={cnsResult.status} />
+        <CnsScoreCard
+          score={cnsResult.score}
+          status={cnsResult.status}
+          reason={cnsResult.reason}
+        />
 
         <Suspense fallback={<Last7DaysCardSkeleton />}>
           <Last7DaysCard />

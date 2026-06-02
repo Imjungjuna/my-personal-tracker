@@ -48,48 +48,11 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
 
   const user = data?.claims;
-  // #region agent log
-  fetch("http://127.0.0.1:7563/ingest/a3863a5f-be11-4ccd-889b-f3f9eea40172", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "e38559",
-    },
-    body: JSON.stringify({
-      sessionId: "e38559",
-      location: "lib/supabase/proxy.ts:getClaims",
-      message: "after getClaims",
-      data: { hasUser: !!user, pathname: request.nextUrl.pathname },
-      timestamp: Date.now(),
-      hypothesisId: "H2",
-    }),
-  }).catch(() => {});
-  // #endregion
 
   if (!user && isProtectedRoute(request.nextUrl.pathname)) {
     // no user on protected route → redirect to login
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    // #region agent log
-    fetch("http://127.0.0.1:7563/ingest/a3863a5f-be11-4ccd-889b-f3f9eea40172", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "e38559",
-      },
-      body: JSON.stringify({
-        sessionId: "e38559",
-        location: "lib/supabase/proxy.ts:redirect",
-        message: "redirect to login",
-        data: {
-          redirectHref: url.toString(),
-          pathname: request.nextUrl.pathname,
-        },
-        timestamp: Date.now(),
-        hypothesisId: "H1,H5",
-      }),
-    }).catch(() => {});
-    // #endregion
     return NextResponse.redirect(url);
   }
 
@@ -106,22 +69,5 @@ export async function updateSession(request: NextRequest) {
   // If this is not done, you may be causing the browser and server to go out
   // of sync and terminate the user's session prematurely!
 
-  // #region agent log
-  fetch("http://127.0.0.1:7563/ingest/a3863a5f-be11-4ccd-889b-f3f9eea40172", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Debug-Session-Id": "e38559",
-    },
-    body: JSON.stringify({
-      sessionId: "e38559",
-      location: "lib/supabase/proxy.ts:next",
-      message: "pass through",
-      data: { pathname: request.nextUrl.pathname },
-      timestamp: Date.now(),
-      hypothesisId: "H4",
-    }),
-  }).catch(() => {});
-  // #endregion
   return supabaseResponse;
 }

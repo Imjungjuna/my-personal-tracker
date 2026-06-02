@@ -3,7 +3,7 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isOnboardingComplete } from "@/lib/types/supabase";
-import { getDateDaysAgo, getLogTimeFromDaysAgo } from "@/utils/date";
+import { getISODaysAgo, getLogTimeFromDaysAgo } from "@/utils/date";
 
 export const verifySessionUsingGetClaims = cache(async () => {
   const supabase = await createClient();
@@ -47,15 +47,15 @@ export const getCachedUser = cache(async () => {
 });
 
 export const getCachedSleepLogs7Days = cache(
-  async (userId: string, fromDate: string = getDateDaysAgo(6)) => {
+  async (userId: string, fromDate: string = getISODaysAgo(6)) => {
     const supabase = await createClient();
 
     const { data } = await supabase
       .from("sleep_logs")
-      .select("sleep_date, bed_time, wake_time")
+      .select("wake_date, bed_time, wake_time")
       .eq("user_id", userId)
-      .gte("sleep_date", fromDate)
-      .order("sleep_date", { ascending: false });
+      .gte("wake_date", fromDate)
+      .order("wake_date", { ascending: false });
 
     return data ?? [];
   },
@@ -93,9 +93,9 @@ export const getLatestSleepLog = cache(async (userId: string) => {
   const supabase = await createClient()
   const { data } = await supabase
     .from('sleep_logs')
-    .select('sleep_date, bed_time, wake_time, sleep_quality')
+    .select('wake_date, bed_time, wake_time, sleep_quality')
     .eq('user_id', userId)
-    .order('sleep_date', { ascending: false })
+    .order('wake_date', { ascending: false })
     .limit(1)
   return data?.[0] ?? null
 })
@@ -104,9 +104,9 @@ export const getTodaySleepLog = cache(async (userId: string, todayISO: string) =
   const supabase = await createClient()
   const { data } = await supabase
     .from('sleep_logs')
-    .select('sleep_date, bed_time, wake_time, sleep_quality')
+    .select('wake_date, bed_time, wake_time, sleep_quality')
     .eq('user_id', userId)
-    .eq('sleep_date', todayISO)
+    .eq('wake_date', todayISO)
     .single()
   return data ?? null
 })

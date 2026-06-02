@@ -1,5 +1,4 @@
-import { getTodayISO } from "@/utils/date";
-import { getCachedUser, getLatestSleepLog, getCachedSleepLogs7Days } from "@/lib/dal";
+import { getCachedUser, getCachedSleepLogs7Days } from "@/lib/dal";
 import { SleepLogForm } from "./SleepLogForm";
 import { SleepCharts } from "./SleepCharts";
 import { Suspense } from "react";
@@ -7,12 +6,8 @@ import SleepChartWrapperSkeleton from "@/components/Skeleton/SleepChartWrapperSk
 import { SleepyDog } from "@/components/SleepyDog";
 
 export default async function CheckinPage() {
-  const today = getTodayISO();
   const user = await getCachedUser();
-  const [initialLog, sleepLogs] = await Promise.all([
-    getLatestSleepLog(user.id),
-    getCachedSleepLogs7Days(user.id),
-  ]);
+  const sleepLogs = await getCachedSleepLogs7Days(user.id);
 
   return (
     <div className="min-h-screen bg-cream pb-10">
@@ -23,7 +18,7 @@ export default async function CheckinPage() {
         </div>
 
         <div className="rounded-3xl bg-warm-white shadow-[0_4px_24px_rgba(200,149,108,0.12)] p-6">
-          <SleepLogForm today={today} initialLog={initialLog} />
+          <SleepLogForm />
         </div>
 
         <div className="rounded-3xl bg-warm-white shadow-[0_4px_24px_rgba(200,149,108,0.12)] p-6">
