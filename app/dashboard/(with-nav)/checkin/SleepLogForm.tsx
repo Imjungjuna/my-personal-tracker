@@ -2,8 +2,8 @@
 
 import { useActionState, useRef, useState } from "react";
 import { saveSleepLog, type SaveSleepLogState } from "./actions";
+import { getISODaysAgo } from "@/utils/date";
 import { JellyButton } from "@/components/ui/JellyButton";
-
 
 function formatMonthDay(isoDate: string): string {
   const [, month, day] = isoDate.split("-");
@@ -32,21 +32,13 @@ const SLEEP_QUALITY_LABELS: Record<number, string> = {
   5: "매우 좋음",
 };
 
-function getTodayLocalDate(): string {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
-export function SleepLogForm({ className = "" }: { className?: string }) {
+export function SleepLogForm({ className }: { className?: string }) {
   const [state, formAction, pending] = useActionState(
     saveSleepLog,
     {} as SaveSleepLogState,
   );
 
-  const [sleepDate, setSleepDate] = useState(getTodayLocalDate);
+  const [sleepDate, setSleepDate] = useState(getISODaysAgo(1));
   const [sleepQuality, setSleepQuality] = useState<number | null>(null);
   const dateInputRef = useRef<HTMLInputElement>(null);
 
@@ -85,7 +77,9 @@ export function SleepLogForm({ className = "" }: { className?: string }) {
       </div>
 
       <div>
-        <label htmlFor="bed_time" className={labelClass}>취침 시간</label>
+        <label htmlFor="bed_time" className={labelClass}>
+          취침 시간
+        </label>
         <input
           id="bed_time"
           type="time"
@@ -102,7 +96,9 @@ export function SleepLogForm({ className = "" }: { className?: string }) {
       </div>
 
       <div>
-        <label htmlFor="wake_time" className={labelClass}>기상 시간</label>
+        <label htmlFor="wake_time" className={labelClass}>
+          기상 시간
+        </label>
         <input
           id="wake_time"
           type="time"
@@ -150,7 +146,11 @@ export function SleepLogForm({ className = "" }: { className?: string }) {
         </p>
       )}
       {state?.success && (
-        <p className="text-sm text-paw-brown font-bold" role="status" aria-live="polite">
+        <p
+          className="text-sm text-paw-brown font-bold"
+          role="status"
+          aria-live="polite"
+        >
           저장됐어요! 🐾
         </p>
       )}
