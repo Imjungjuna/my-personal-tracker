@@ -58,22 +58,16 @@ export function SleepLogForm({ className }: { className?: string }) {
             ref={dateInputRef}
             id="sleep_date"
             type="date"
-            name="sleep_date"
             value={sleepDate}
             onChange={(e) => setSleepDate(e.target.value)}
-            required
             className="sr-only"
           />
           <span className="text-bark-mid font-bold text-lg shrink-0">→</span>
           <span className="flex-1 flex items-center justify-center rounded-2xl border-2 border-paw-brown-light bg-cream px-4 py-3 text-bark-mid font-bold text-base">
             {formatMonthDay(addOneDay(sleepDate))}
           </span>
+          <input type="hidden" name="wake_date" value={addOneDay(sleepDate)} />
         </div>
-        {state?.errors?.sleep_date && (
-          <p className="mt-1 text-sm text-red-500 font-medium" role="alert">
-            {state.errors.sleep_date}
-          </p>
-        )}
       </div>
 
       <div>

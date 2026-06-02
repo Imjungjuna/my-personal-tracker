@@ -7,7 +7,6 @@ import { z } from "zod";
 
 export type SaveSleepLogState = {
   errors?: {
-    sleep_date?: string;
     bed_time?: string;
     wake_time?: string;
     sleep_quality?: string;
@@ -17,7 +16,7 @@ export type SaveSleepLogState = {
 };
 
 const sleepLogSchema = z.object({
-  sleep_date: z.string().min(1, "날짜를 선택해 주세요."),
+  wake_date: z.string().min(1),
   bed_time: z.string().min(1, "취침 시간을 입력해 주세요."),
   wake_time: z.string().min(1, "기상 시간을 입력해 주세요."),
   sleep_quality: z.coerce.number().int().min(1).max(5).nullable().optional(),
@@ -28,9 +27,9 @@ function toTimestamptzISO(date: string, time: string): string {
   return `${date}T${normalized}`;
 }
 
-function addOneDay(isoDate: string): string {
+function subtractOneDay(isoDate: string): string {
   const d = new Date(`${isoDate}T00:00:00`);
-  d.setDate(d.getDate() + 1);
+  d.setDate(d.getDate() - 1);
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
@@ -52,7 +51,7 @@ export async function saveSleepLog(
   }
 
   const raw = {
-    sleep_date: formData.get("sleep_date"),
+    wake_date: formData.get("wake_date"),
     bed_time: formData.get("bed_time"),
     wake_time: formData.get("wake_time"),
     sleep_quality: formData.get("sleep_quality") || null,
@@ -63,8 +62,6 @@ export async function saveSleepLog(
   if (!parsed.success) {
     const flatten = parsed.error.flatten();
     const errors: SaveSleepLogState["errors"] = {};
-    if (flatten.fieldErrors.sleep_date)
-      errors.sleep_date = flatten.fieldErrors.sleep_date[0];
     if (flatten.fieldErrors.bed_time)
       errors.bed_time = flatten.fieldErrors.bed_time[0];
     if (flatten.fieldErrors.wake_time)
@@ -72,16 +69,16 @@ export async function saveSleepLog(
     return { errors };
   }
 
-  const { sleep_date, bed_time, wake_time, sleep_quality } = parsed.data;
+  const { wake_date, bed_time, wake_time, sleep_quality } = parsed.data;
 
-  const bedTimeISO = toTimestamptzISO(sleep_date, bed_time);
-  const wakeDate = wake_time < bed_time ? addOneDay(sleep_date) : sleep_date;
-  const wakeTimeISO = toTimestamptzISO(wakeDate, wake_time);
+  const bedDate = bed_time < "12:00" ? wake_date : subtractOneDay(wake_date);
+  const bedTimeISO = toTimestamptzISO(bedDate, bed_time);
+  const wakeTimeISO = toTimestamptzISO(wake_date, wake_time);
 
   const { error: upsertError } = await supabase.from("sleep_logs").upsert(
     {
       user_id: user.id,
-      wake_date: wakeDate,
+      wake_date: wake_date,
       bed_time: bedTimeISO,
       wake_time: wakeTimeISO,
       sleep_quality: sleep_quality ?? null,
