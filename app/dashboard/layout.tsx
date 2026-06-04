@@ -1,11 +1,8 @@
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+// app/dashboard/layout.tsx
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-zinc-100 dark:bg-zinc-900">
+    <div className="flex min-h-screen bg-cream">
       {children}
     </div>
-  )
+  );
 }
