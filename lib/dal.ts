@@ -52,7 +52,7 @@ export const getCachedSleepLogs7Days = cache(
 
     const { data } = await supabase
       .from("sleep_logs")
-      .select("wake_date, bed_time, wake_time")
+      .select("wake_date, bed_time, wake_time, sleep_quality")
       .eq("user_id", userId)
       .gte("wake_date", fromDate)
       .order("wake_date", { ascending: false });
