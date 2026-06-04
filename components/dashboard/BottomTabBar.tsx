@@ -23,7 +23,7 @@ export function BottomTabBar() {
   const pathname = usePathname();
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-10 bg-warm-white/90 backdrop-blur-sm border-t border-paw-brown-light">
+    <nav aria-label="메인 탐색" className="md:hidden fixed bottom-0 left-0 right-0 z-10 bg-warm-white/90 backdrop-blur-sm border-t border-paw-brown-light">
       <div className="flex">
         {TAB_ITEMS.map((item) => {
           const isActive = item.exact
