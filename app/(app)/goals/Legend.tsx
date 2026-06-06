@@ -4,7 +4,7 @@ import type { CellState } from '@/lib/checklist/types'
 const ITEMS: { state: CellState; label: string }[] = [
   { state: 'DONE', label: '완료' },
   { state: 'MISSED', label: '미완료' },
-  { state: 'PENDING', label: '오늘 (진행중)' },
+  { state: 'PENDING', label: '진행중 (오늘)' },
   { state: 'NA', label: '해당없음' },
 ]
 
