@@ -91,6 +91,6 @@ export async function saveSleepLog(
   }
 
   revalidatePath("/dashboard");
-  revalidatePath("/dashboard/checkin");
+  revalidatePath("/check-in/sleep");
   redirect("/dashboard");
 }

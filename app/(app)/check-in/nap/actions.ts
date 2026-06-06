@@ -69,6 +69,6 @@ export async function saveNapLog(
   }
 
   revalidatePath('/dashboard')
-  revalidatePath('/dashboard/nap-checkin')
+  revalidatePath('/check-in/nap')
   redirect('/dashboard')
 }

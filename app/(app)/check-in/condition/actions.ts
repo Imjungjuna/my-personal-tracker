@@ -78,6 +78,6 @@ export async function saveConditionLog(
   }
 
   revalidatePath('/dashboard')
-  revalidatePath('/dashboard/condition-checkin')
+  revalidatePath('/check-in/condition')
   redirect('/dashboard')
 }

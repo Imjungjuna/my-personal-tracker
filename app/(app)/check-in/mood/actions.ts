@@ -56,6 +56,6 @@ export async function saveMoodLog(
   }
 
   revalidatePath('/dashboard')
-  revalidatePath('/dashboard/mood-checkin')
+  revalidatePath('/check-in/mood')
   redirect('/dashboard')
 }
