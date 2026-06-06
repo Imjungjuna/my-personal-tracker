@@ -1,6 +1,6 @@
 'use client'
 
-import { useOptimistic, useTransition, useState } from 'react'
+import { useOptimistic, useTransition, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import type { GoalWithPeriods, DailyLog } from '@/lib/checklist/types'
 import { upsertLog, toggleGoalActive } from '@/lib/checklist/actions'
@@ -26,12 +26,15 @@ export function TodayChecklist({ initialGoals, initialLogs, today }: Props) {
   const router = useRouter()
   const [inactiveOpen, setInactiveOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition()
 
-  const initialLogDone: Record<string, boolean> = {}
-  for (const log of initialLogs) {
-    initialLogDone[log.goal_id] = log.done
-  }
+  const initialLogDone = useMemo(() => {
+    const map: Record<string, boolean> = {}
+    for (const log of initialLogs) {
+      map[log.goal_id] = log.done
+    }
+    return map
+  }, [initialLogs])
 
   const [optimistic, addOptimistic] = useOptimistic(
     { goals: initialGoals, logDone: initialLogDone } satisfies ChecklistState,
@@ -51,8 +54,8 @@ export function TodayChecklist({ initialGoals, initialLogs, today }: Props) {
     }
   )
 
-  const activeGoals = optimistic.goals.filter(g => g.is_active)
-  const inactiveGoals = optimistic.goals.filter(g => !g.is_active)
+  const activeGoals = useMemo(() => optimistic.goals.filter(g => g.is_active), [optimistic.goals])
+  const inactiveGoals = useMemo(() => optimistic.goals.filter(g => !g.is_active), [optimistic.goals])
 
   const handleToggleDone = (goalId: string) => {
     const currentDone = optimistic.logDone[goalId] ?? false
@@ -103,8 +106,8 @@ export function TodayChecklist({ initialGoals, initialLogs, today }: Props) {
               key={goal.id}
               goal={goal}
               done={optimistic.logDone[goal.id] ?? false}
-              onToggleDone={() => handleToggleDone(goal.id)}
-              onToggleActive={() => handleToggleActive(goal.id, true)}
+              onToggleDone={isPending ? () => {} : () => handleToggleDone(goal.id)}
+              onToggleActive={isPending ? () => {} : () => handleToggleActive(goal.id, true)}
             />
           ))
         )}
@@ -138,7 +141,7 @@ export function TodayChecklist({ initialGoals, initialLogs, today }: Props) {
                   done={false}
                   inactive
                   onToggleDone={() => {}}
-                  onToggleActive={() => handleToggleActive(goal.id, false)}
+                  onToggleActive={isPending ? () => {} : () => handleToggleActive(goal.id, false)}
                 />
               ))}
             </div>
