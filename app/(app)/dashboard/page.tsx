@@ -1,4 +1,4 @@
-// app/dashboard/(with-nav)/page.tsx
+// app/(app)/dashboard/page.tsx
 import { Suspense } from "react";
 import {
   getCachedUser,

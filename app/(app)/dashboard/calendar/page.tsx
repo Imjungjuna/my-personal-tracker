@@ -1,4 +1,4 @@
-// app/dashboard/(with-nav)/calendar/page.tsx
+// app/(app)/dashboard/calendar/page.tsx
 import { getCachedUser, getMonthLogs } from "@/lib/dal";
 import { MonthCalendar } from "@/components/calendar/MonthCalendar";
 
