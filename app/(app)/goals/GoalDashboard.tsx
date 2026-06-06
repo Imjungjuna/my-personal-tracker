@@ -1,6 +1,6 @@
 'use client'
 
-import { useOptimistic, useTransition, useState } from 'react'
+import { useOptimistic, useTransition, useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   DndContext,
@@ -40,10 +40,13 @@ export function GoalDashboard({ initialGoals, logs, dates, today }: Props) {
   const [, startTransition] = useTransition()
 
   // Build lookup: `${goalId}:${date}` → done
-  const logMap = new Map<string, boolean>()
-  for (const log of logs) {
-    logMap.set(`${log.goal_id}:${log.log_date}`, log.done)
-  }
+  const logMap = useMemo(() => {
+    const map = new Map<string, boolean>()
+    for (const log of logs) {
+      map.set(`${log.goal_id}:${log.log_date}`, log.done)
+    }
+    return map
+  }, [logs])
 
   const [optimisticGoals, addOptimistic] = useOptimistic(
     initialGoals,

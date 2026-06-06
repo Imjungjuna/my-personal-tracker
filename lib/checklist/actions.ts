@@ -20,28 +20,32 @@ export async function upsertLog(goalId: string, date: string, done: boolean): Pr
 export async function addGoal(name: string): Promise<void> {
   const supabase = await createClient()
   const user = await getCachedUser()
+  const trimmed = name.trim()
+  if (!trimmed) throw new Error('name required')
 
   const { error } = await supabase
     .from('goals')
-    .insert({ user_id: user.id, name: name.trim(), is_active: true })
+    .insert({ user_id: user.id, name: trimmed, is_active: true })
 
   if (error) throw new Error(error.message)
 }
 
 export async function toggleGoalActive(goalId: string, currentlyActive: boolean): Promise<void> {
   const supabase = await createClient()
+  const user = await getCachedUser()
   const rpc = currentlyActive ? 'deactivate_goal' : 'activate_goal'
 
-  const { error } = await supabase.rpc(rpc, { p_goal_id: goalId })
+  const { error } = await supabase.rpc(rpc, { p_goal_id: goalId, p_user_id: user.id })
   if (error) throw new Error(error.message)
 }
 
 export async function reorderGoals(updates: { id: string; sort_order: number }[]): Promise<void> {
   const supabase = await createClient()
+  const user = await getCachedUser()
 
   const results = await Promise.all(
     updates.map(({ id, sort_order }) =>
-      supabase.from('goals').update({ sort_order }).eq('id', id)
+      supabase.from('goals').update({ sort_order }).eq('id', id).eq('user_id', user.id)
     )
   )
 
