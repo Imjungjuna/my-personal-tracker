@@ -33,9 +33,18 @@ export async function addGoal(name: string): Promise<void> {
 export async function toggleGoalActive(goalId: string, currentlyActive: boolean): Promise<void> {
   const supabase = await createClient()
   const user = await getCachedUser()
-  const rpc = currentlyActive ? 'deactivate_goal' : 'activate_goal'
 
-  const { error } = await supabase.rpc(rpc, { p_goal_id: goalId, p_user_id: user.id })
+  // Verify ownership before calling RPC
+  const { data: goal } = await supabase
+    .from('goals')
+    .select('id')
+    .eq('id', goalId)
+    .eq('user_id', user.id)
+    .single()
+  if (!goal) throw new Error('Goal not found')
+
+  const rpc = currentlyActive ? 'deactivate_goal' : 'activate_goal'
+  const { error } = await supabase.rpc(rpc, { p_goal_id: goalId })
   if (error) throw new Error(error.message)
 }
 
