@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useTransition } from 'react'
+import { useEffect, useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { addGoal } from '@/lib/checklist/actions'
 
@@ -12,10 +12,12 @@ export function AddGoalForm() {
   const router = useRouter()
   const inputRef = useRef<HTMLInputElement>(null)
 
+  useEffect(() => {
+    if (open) inputRef.current?.focus()
+  }, [open])
+
   const openForm = () => {
     setOpen(true)
-    // focus after state update renders the input
-    setTimeout(() => inputRef.current?.focus(), 0)
   }
 
   const closeForm = () => {
@@ -26,8 +28,8 @@ export function AddGoalForm() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name.trim()) return
     setError(null)
+    if (!name.trim()) return
     startTransition(async () => {
       try {
         await addGoal(name.trim())
@@ -43,6 +45,7 @@ export function AddGoalForm() {
     return (
       <button
         onClick={openForm}
+        aria-label="목표 추가"
         className="w-full flex items-center gap-2 px-5 py-4 rounded-3xl bg-warm-white/80 border-2 border-dashed border-paw-brown-light text-muted-foreground hover:text-bark-dark hover:border-paw-brown transition-colors text-sm font-medium"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
@@ -65,6 +68,7 @@ export function AddGoalForm() {
         onChange={e => setName(e.target.value)}
         placeholder="새 목표 이름 (예: 물 2L 마시기)"
         maxLength={200}
+        aria-label="새 목표 이름"
         className="w-full bg-transparent text-bark-dark placeholder:text-muted-foreground text-base font-medium outline-none border-b border-border pb-2 mb-3"
       />
       {error && <p className="text-xs text-rose-500 mb-2">{error}</p>}
