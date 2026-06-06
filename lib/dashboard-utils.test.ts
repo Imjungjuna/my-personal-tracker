@@ -26,11 +26,12 @@ describe("buildWeekChartData", () => {
   });
 
   it("fills in condition values for matching date", () => {
+    const todayKST = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Seoul" });
     const conditionLogs = [
-      { log_date: "2026-06-04", mental_condition: 4, physical_energy: 3, muscle_soreness: 2 },
+      { log_date: todayKST, mental_condition: 4, physical_energy: 3, muscle_soreness: 2 },
     ];
     const sleepLogs = [
-      { wake_date: "2026-06-04", sleep_quality: 5 },
+      { wake_date: todayKST, sleep_quality: 5 },
     ];
     // find today's entry
     const result = buildWeekChartData(conditionLogs, sleepLogs);
