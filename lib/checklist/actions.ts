@@ -39,9 +39,13 @@ export async function toggleGoalActive(goalId: string, currentlyActive: boolean)
 export async function reorderGoals(updates: { id: string; sort_order: number }[]): Promise<void> {
   const supabase = await createClient()
 
-  await Promise.all(
+  const results = await Promise.all(
     updates.map(({ id, sort_order }) =>
       supabase.from('goals').update({ sort_order }).eq('id', id)
     )
   )
+
+  for (const result of results) {
+    if (result.error) throw new Error(result.error.message)
+  }
 }
