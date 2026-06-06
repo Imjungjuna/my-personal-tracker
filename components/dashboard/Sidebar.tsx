@@ -8,13 +8,13 @@ const NAV_ITEMS = [
   {
     href: "/dashboard",
     label: "대시보드",
+    exact: true,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4 shrink-0">
         <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
         <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
       </svg>
     ),
-    exact: true,
   },
   {
     href: "/dashboard/calendar",
@@ -27,8 +27,32 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: "/dashboard/checkin",
+    href: "/check-in/daily-goals",
+    label: "체크리스트",
+    exact: true,
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4 shrink-0">
+        <polyline points="9 11 12 14 22 4" />
+        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+      </svg>
+    ),
+  },
+  {
+    href: "/goals",
+    label: "목표 현황",
+    exact: true,
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4 shrink-0">
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <line x1="3" y1="9" x2="21" y2="9" /><line x1="3" y1="15" x2="21" y2="15" />
+        <line x1="9" y1="3" x2="9" y2="21" /><line x1="15" y1="3" x2="15" y2="21" />
+      </svg>
+    ),
+  },
+  {
+    href: "/check-in/sleep",
     label: "수면",
+    exact: true,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4 shrink-0">
         <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
@@ -36,8 +60,9 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: "/dashboard/mood-checkin",
+    href: "/check-in/mood",
     label: "기분",
+    exact: true,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4 shrink-0">
         <circle cx="12" cy="12" r="10" />
@@ -48,8 +73,9 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: "/dashboard/nap-checkin",
+    href: "/check-in/nap",
     label: "낮잠",
+    exact: true,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4 shrink-0">
         <path d="M18 8h1a4 4 0 010 8h-1" /><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z" />
@@ -58,8 +84,9 @@ const NAV_ITEMS = [
     ),
   },
   {
-    href: "/dashboard/condition-checkin",
+    href: "/check-in/condition",
     label: "컨디션",
+    exact: true,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4 shrink-0">
         <path d="M18 8c0 4-6 9-6 9S6 12 6 8a6 6 0 0112 0z" /><circle cx="12" cy="8" r="2" />
