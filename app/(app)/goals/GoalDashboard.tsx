@@ -177,6 +177,7 @@ export function GoalDashboard({ initialGoals, logs, dates, today }: Props) {
                     sensors={sensors}
                     collisionDetection={closestCenter}
                     onDragEnd={e => handleDragEnd(e, 'active')}
+                    accessibility={{ container: typeof document !== 'undefined' ? document.body : undefined }}
                   >
                     <SortableContext
                       items={activeGoals.map(g => g.id)}
@@ -225,6 +226,7 @@ export function GoalDashboard({ initialGoals, logs, dates, today }: Props) {
                       sensors={sensors}
                       collisionDetection={closestCenter}
                       onDragEnd={e => handleDragEnd(e, 'inactive')}
+                      accessibility={{ container: typeof document !== 'undefined' ? document.body : undefined }}
                     >
                       <SortableContext
                         items={inactiveGoals.map(g => g.id)}
