@@ -13,6 +13,8 @@ import { WeekConditionChart } from "@/components/dashboard/WeekConditionChart";
 import { TodayMetricsCard } from "@/components/dashboard/TodayMetricsCard";
 import { MoodLogList } from "@/components/dashboard/MoodLogList";
 import { DogStatusWidget } from "@/components/DogStatusWidget";
+import { LogoutButton } from "@/components/LogoutButton";
+import Link from "next/link";
 import { SleepCharts } from "@/app/(app)/check-in/sleep/SleepCharts";
 import { durationMinutes, getTodayISO, getTodayStartTs } from "@/utils/date";
 import type { DogState } from "@/components/SleepyDog";
@@ -71,7 +73,10 @@ export default async function DashboardPage() {
           <span className="hidden sm:inline-block text-[11px] text-bark-mid bg-cream border border-[#E8C4A0] px-3 py-1 rounded-full">
             {todayLabel}
           </span>
-          <div className="flex items-center gap-2.5 px-2.5 py-1.5 bg-cream border border-[#E8C4A0] rounded-xl">
+          <Link
+            href="/profile"
+            className="flex items-center gap-2.5 px-2.5 py-1.5 bg-cream border border-[#E8C4A0] rounded-xl hover:bg-[#F0E4D4] transition-colors"
+          >
             <div className="w-7 h-7 rounded-full bg-paw-brown flex items-center justify-center shrink-0">
               <svg
                 viewBox="0 0 24 24"
@@ -92,7 +97,8 @@ export default async function DashboardPage() {
                 {user.email}
               </span>
             </div>
-          </div>
+          </Link>
+          <LogoutButton />
         </div>
       </header>
 

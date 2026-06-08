@@ -50,9 +50,17 @@ export function OnboardingForm() {
   const [wakeTime, setWakeTime] = useState("07:00");
   const [sleepQuality, setSleepQuality] = useState<number | null>(null);
   const [hasNarcolepsy, setHasNarcolepsy] = useState(false);
-  const [napDuration, setNapDuration] = useState("0");
+  const [napDuration, setNapDuration] = useState<string | null>(null);
 
   const isLastStep = step === STEPS.length - 1;
+
+  const canProceed = (() => {
+    if (step === 0) return age !== "" && Number(age) >= 1 && Number(age) <= 120;
+    if (step === 1) return gender !== "";
+    if (step === 3) return sleepQuality !== null;
+    if (step === 4) return napDuration !== null;
+    return true;
+  })();
 
   function goNext() {
     setDirection(1);
@@ -193,7 +201,7 @@ export function OnboardingForm() {
                       type="button"
                       onClick={() => setNapDuration(opt.value)}
                       className={`rounded-2xl border-2 py-2.5 px-2 text-sm font-bold transition ${
-                        napDuration === opt.value
+                        napDuration !== null && napDuration === opt.value
                           ? "border-paw-brown bg-sleepy-yellow-light text-bark-dark"
                           : "border-paw-brown-light bg-cream text-bark-mid hover:border-paw-brown"
                       }`}
@@ -241,7 +249,8 @@ export function OnboardingForm() {
           <JellyButton
             type="button"
             onClick={goNext}
-            className="flex-1 rounded-full bg-paw-brown py-3 font-bold text-warm-white shadow-sm"
+            disabled={!canProceed}
+            className="flex-1 rounded-full bg-paw-brown py-3 font-bold text-warm-white shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
           >
             다음 →
           </JellyButton>
@@ -264,12 +273,12 @@ export function OnboardingForm() {
             <input
               type="hidden"
               name="usual_nap_duration_minutes"
-              value={napDuration}
+              value={napDuration ?? ""}
             />
             <JellyButton
               type="submit"
-              disabled={pending}
-              className="w-full rounded-full bg-paw-brown py-3 font-bold text-warm-white shadow-sm disabled:opacity-60"
+              disabled={pending || !canProceed}
+              className="w-full rounded-full bg-paw-brown py-3 font-bold text-warm-white shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {pending ? "저장 중..." : "완료! 대시보드로 →"}
             </JellyButton>
