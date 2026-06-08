@@ -62,7 +62,7 @@ export default async function DashboardPage() {
   return (
     <div className="flex-1 flex flex-col min-h-screen bg-cream">
       {/* Header */}
-      <header className="bg-warm-white border-b border-[#E8D5C0] px-7 h-[58px] flex items-center justify-between">
+      <header className="bg-warm-white border-b border-[#EDE0D0]/50 px-7 h-[58px] flex items-center justify-between">
         <div>
           <h1 className="text-[17px] font-bold text-bark-dark">대시보드</h1>
           <p className="text-[11px] text-bark-mid">
@@ -103,7 +103,7 @@ export default async function DashboardPage() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 px-7 py-5 flex flex-col gap-4">
+      <main className="flex-1 px-7 py-5 flex flex-col gap-6">
         {/* Check-in buttons */}
         <Suspense
           fallback={

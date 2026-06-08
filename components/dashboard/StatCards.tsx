@@ -3,9 +3,9 @@ import { getCachedUser, getCachedMoodLogs7Days, getCachedNapLogs7Days, getTodayS
 import { calculateCnsScore } from "@/lib/cns-score";
 import { durationMinutes, formatDuration, getTodayISO, getTodayStartTs } from "@/utils/date";
 
-function StatCard({ children, primary }: { children: React.ReactNode; primary?: boolean }) {
+function StatCard({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`rounded-[14px] p-4 ${primary ? "bg-bark-dark" : "bg-warm-white border border-[#E8D5C0]"}`}>
+    <div className="rounded-[14px] p-4 bg-warm-white border border-[#E8D5C0]">
       {children}
     </div>
   );
@@ -59,13 +59,13 @@ export async function StatCards() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       {/* CNS */}
-      <StatCard primary>
-        <p className="text-[11px] font-medium text-warm-white/60 mb-1">오늘 CNS 점수</p>
-        <p className="text-3xl font-extrabold text-sleepy-yellow leading-none">
-          {cnsScore ?? "—"}
+      <StatCard>
+        <p className="text-[11px] font-medium text-bark-mid mb-1">오늘 CNS 점수</p>
+        <p className="text-[32px] font-extrabold text-paw-brown leading-none">
+          {cnsScore ?? 0}
         </p>
         {cnsStatus && (
-          <span className="inline-block mt-1.5 text-[10px] font-semibold bg-sleepy-yellow/15 text-sleepy-yellow px-2 py-0.5 rounded-full">
+          <span className="inline-block mt-1.5 text-[10px] font-semibold bg-[#FFF3C4] text-bark-dark px-2 py-0.5 rounded-full">
             {cnsStatus}
           </span>
         )}
@@ -74,7 +74,7 @@ export async function StatCards() {
       {/* Sleep */}
       <StatCard>
         <p className="text-[11px] font-medium text-bark-mid mb-1">수면 시간</p>
-        <p className="text-3xl font-extrabold text-bark-dark leading-none">
+        <p className="text-[32px] font-extrabold text-bark-dark leading-none">
           {sleepMin != null ? formatDuration(sleepMin) : "—"}
         </p>
       </StatCard>
@@ -82,16 +82,16 @@ export async function StatCards() {
       {/* Mood */}
       <StatCard>
         <p className="text-[11px] font-medium text-bark-mid mb-1">기분 평균</p>
-        <p className="text-3xl font-extrabold text-bark-dark leading-none">
+        <p className="text-[32px] font-extrabold text-bark-dark leading-none">
           {moodAvg ?? "—"}
-          {moodAvg && <span className="text-sm font-medium text-bark-mid ml-1">/5</span>}
+          {moodAvg && <span className="text-sm font-medium text-bark-light ml-1">/5</span>}
         </p>
       </StatCard>
 
       {/* Nap */}
       <StatCard>
         <p className="text-[11px] font-medium text-bark-mid mb-1">낮잠</p>
-        <p className="text-3xl font-extrabold text-bark-dark leading-none">
+        <p className="text-[32px] font-extrabold text-bark-dark leading-none">
           {napTotalMin > 0 ? formatDuration(napTotalMin) : "—"}
         </p>
         {todayNaps.length > 0 && (

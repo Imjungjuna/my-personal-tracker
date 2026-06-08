@@ -48,7 +48,7 @@
 
   /* Sleepy Dog 팔레트 */
   --color-cream: #FDF6EC;
-  --color-warm-white: #FFFBF5;
+  --color-warm-white: #FFFFFF;
   --color-paw-brown: #C8956C;
   --color-paw-brown-light: #E8C4A0;
   --color-sleepy-yellow: #FFD97D;
@@ -63,7 +63,7 @@
   --radius: 0.625rem;
   --background: #FDF6EC;
   --foreground: #5C3D2E;
-  --card: #FFFBF5;
+  --card: #FFFFFF;
   --card-foreground: #5C3D2E;
   --popover: #FFFBF5;
   --popover-foreground: #5C3D2E;

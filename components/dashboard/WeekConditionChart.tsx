@@ -20,7 +20,6 @@ const METRICS = [
 ] as const;
 
 const CHART_HEIGHT = 110;
-const BAR_WIDTH = 8;
 
 export function WeekConditionChart({ sleepPromise, conditionPromise }: Props) {
   const sleepLogs = use(sleepPromise);
@@ -28,24 +27,24 @@ export function WeekConditionChart({ sleepPromise, conditionPromise }: Props) {
   const days = buildWeekChartData(conditionLogs, sleepLogs);
 
   return (
-    <div>
+    <div className="w-full overflow-hidden">
       {/* Bars */}
-      <div className="flex items-end gap-2" style={{ height: CHART_HEIGHT }}>
+      <div className="flex items-end gap-1" style={{ height: CHART_HEIGHT }}>
         {days.map((day) => (
-          <div key={day.date} className="flex-1 flex flex-col items-center gap-0.5">
-            <div className="flex items-end gap-0.5 w-full justify-center">
+          <div key={day.date} className="flex-1 min-w-0 flex flex-col items-center gap-0.5">
+            <div className="grid gap-[2px] w-full" style={{ gridTemplateColumns: `repeat(${METRICS.length}, 1fr)` }}>
               {METRICS.map(({ key, color }) => {
                 const value = day[key];
-                const height = value != null ? Math.round((value / 5) * CHART_HEIGHT) : 0;
+                const height = value != null ? Math.round((value / 5) * CHART_HEIGHT) : 2;
                 return (
                   <div
                     key={key}
                     title={value != null ? `${value}` : "기록 없음"}
-                    className="rounded-t-[3px] transition-all"
+                    className="rounded-t-[2px] transition-all self-end"
                     style={{
-                      width: BAR_WIDTH,
                       height,
-                      background: value != null ? color : "#F5EDE0",
+                      background: value != null ? color : "#EDE0D0",
+                      opacity: value != null ? 1 : 0.3,
                       outline: day.isToday ? `1.5px solid #5C3D2E` : undefined,
                       outlineOffset: day.isToday ? 1 : undefined,
                     }}
